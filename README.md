@@ -1,23 +1,14 @@
-# Freshers'26 — Mathematics & Computing
+# Freshers'26 Organizer System
 
-Upgraded static prototype for Shri Mata Vaishno Devi University.
+Includes:
+- organizer.html — organizer login screen
+- admin.html — organizer dashboard inspired by the provided Lovable reference
+- Tabs for Overview, Registrations, Check-in, Expenses and Fees
+- SMVDU logo and green/orange visual accents
 
-## Included
-- Responsive Freshers'26 landing page
-- Senior / Junior contribution placeholders
-- Payment safety notice
-- UTR submission prototype
-- Ticket ID generation prototype
-- Admin prototype page
-- Mobile-first layout
+DEMO LOGIN
+Organizer ID: organizer
+Password: freshers26
 
-## Important
-The current ticket/UTR flow is a front-end prototype only. It does NOT verify payments or provide a shared database.
-
-Before public money collection, connect the form and admin panel to a secure shared backend (for example Google Sheets + Apps Script) and add proper admin authentication.
-
-## Deployment
-Upload `index.html`, `admin.html`, and `README.md` to the GitHub repository used by the Vercel project. Vercel will redeploy automatically.
-
-## Branding
-Uses the official SMVDU logo hosted by the university website and a restrained green/orange university-inspired accent palette.
+IMPORTANT:
+This is a frontend prototype. The credentials and session are client-side and are NOT secure for real use. Before collecting real money or storing student data, connect the dashboard to a secure backend/authentication service. The payment verification and ticket/check-in system should validate data server-side.
