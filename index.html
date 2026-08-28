@@ -25,6 +25,7 @@ section{padding:46px 0}.section-title{font-size:30px;margin:0 0 8px}.sub{color:v
 footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px}
 @media(max-width:760px){.links{gap:12px;font-size:12px}.hero{grid-template-columns:1fr;padding-top:45px}.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.art{min-height:330px}.math{font-size:44px}h1{letter-spacing:-3px}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <nav class="nav"><div class="navin"><a class="brand" href="#"><img class="brand-logo" src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU logo"><span>FRESHERS'26<small>Mathematics & Computing • SMVDU</small></span></a><div class="links"><a href="#contribute">Contribute</a><a href="#ticket">Ticket</a><a href="#about">About</a></div></div></nav>
@@ -42,40 +43,86 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 
 <section><div class="wrap"><div class="card" style="display:flex;align-items:center;gap:16px;border-left:5px solid var(--orange)"><img src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU logo" style="width:72px;height:60px;object-fit:contain"><div><b>SMVDU • Mathematics & Computing</b><div class="sub" style="margin:3px 0 0">Freshers'26 contribution & entry portal</div></div></div></div></section>
 <section id="contribute"><div class="wrap">
-<h2 class="section-title">Contribution</h2><p class="sub">Choose your category. Amounts and payment details are currently <b>Coming Soon</b>.</p>
+<h2 class="section-title">Contribution</h2><p class="sub">Choose your category. The organizer-controlled amount and official UPI details appear below.</p>
 <div class="grid">
-<div class="card"><h3>Senior</h3><div class="amount soon">₹ Coming Soon</div><p class="sub">Contribution amount will be added later.</p></div>
-<div class="card"><h3>Junior</h3><div class="amount soon">₹ Coming Soon</div><p class="sub">Contribution amount will be added later.</p></div>
-<div class="card"><h3>Payment</h3><div class="amount soon">UPI / QR Coming Soon</div><p class="sub">Payment details will be enabled after final confirmation.</p></div>
+<div class="card"><h3>Senior</h3><div class="amount" id="seniorFee">₹ Coming Soon</div><p class="sub">Current contribution amount</p></div>
+<div class="card"><h3>Junior</h3><div class="amount" id="juniorFee">₹ Coming Soon</div><p class="sub">Current contribution amount</p></div>
+<div class="card"><h3>Payment</h3><div class="amount" id="upiDisplay">UPI Coming Soon</div><p class="sub" id="paymentHint">Official payment details will appear after organizers publish them.</p></div>
 </div>
-<div class="notice" style="margin-top:16px">Please do not send money until the official UPI details are published on this portal.</div>
+<div id="upiBox" class="card" style="margin-top:16px;display:none">
+<h3>Pay via UPI</h3><p class="sub">Use the official UPI details below. Never share your UPI PIN, OTP or banking password.</p>
+<div class="row"><div><label>UPI ID</label><input id="upiId" readonly></div><div><label>Amount</label><input id="payAmount" readonly></div></div>
+<div class="btns"><a id="upiLink" class="btn primary" href="#">Open UPI app</a></div>
+</div>
+<div class="notice" style="margin-top:16px">Only pay using the official UPI details displayed here. Your ticket is issued only after an organizer verifies the transaction.</div>
 </div></section>
 
-<section id="ticket"><div class="wrap"><h2 class="section-title">Ticket</h2><p class="sub">Ticket generation will be enabled after payment verification.</p>
+<section id="ticket"><div class="wrap"><h2 class="section-title">Registration & Ticket</h2><p class="sub">After paying through the official UPI details, submit your UTR. Your ticket is issued only after payment verification.</p>
 <div class="card form">
 <div class="row"><div><label>Name</label><input id="name" placeholder="Your full name"></div><div><label>Roll Number</label><input id="roll" placeholder="e.g. 25bcm050"></div></div>
-<div class="row"><div><label>Category</label><select id="cat"><option>Senior</option><option>Junior</option></select></div><div><label>UTR / Transaction ID</label><input id="utr" placeholder="Enter after payment"></div></div>
-<div class="btns"><button class="btn primary" onclick="submitPayment()">Submit for verification</button></div>
+<div class="row"><div><label>Email</label><input id="email" type="email" placeholder="Your email"></div><div><label>Phone</label><input id="phone" inputmode="tel" placeholder="Your phone number"></div></div>
+<div class="row"><div><label>Category</label><select id="cat" onchange="updateAmount()"><option value="senior">Senior</option><option value="junior">Junior</option></select></div><div><label>Amount</label><input id="amount" readonly placeholder="Coming Soon"></div></div>
+<label>UTR / Transaction ID</label><input id="utr" placeholder="Enter the UTR after payment">
+<div class="btns"><button class="btn primary" onclick="submitPayment()">Submit registration & UTR</button></div>
 <p id="msg" class="sub"></p>
-<div id="ticketCard" class="ticket"><div class="ticket-top"><b>FRESHERS'26</b><div style="opacity:.8">MATHEMATICS & COMPUTING • SMVDU</div></div><div class="ticket-body"><div style="display:flex;justify-content:space-between;gap:20px;align-items:center"><div><div class="ticket-id" id="tid"></div><h2 id="tn"></h2><p id="td" class="sub"></p><b>STATUS: PAYMENT VERIFICATION PENDING</b></div><div class="qr" aria-label="QR placeholder"></div></div></div></div>
+<div id="ticketCard" class="ticket"><div class="ticket-top"><b>FRESHERS'26</b><div style="opacity:.8">MATHEMATICS & COMPUTING • SMVDU</div></div><div class="ticket-body"><div><div class="ticket-id" id="tid"></div><h2 id="tn"></h2><p id="td" class="sub"></p><b>PAYMENT VERIFICATION PENDING</b></div></div></div>
 </div></div></section>
 
 <section id="about"><div class="wrap"><h2 class="section-title">About Freshers'26</h2><p class="sub">A contribution and entry portal for the Mathematics & Computing Freshers'26 event at Shri Mata Vaishno Devi University.</p><div class="grid"><div class="card"><h3>📅 Date</h3><p class="soon">Coming Soon</p></div><div class="card"><h3>📍 Venue</h3><p class="soon">To Be Announced</p></div><div class="card"><h3>🎟️ Entry</h3><p>Verified contributors receive a unique event ticket.</p></div></div></div></section>
 </main>
 <footer><div class="wrap">Freshers'26 • Mathematics & Computing • Shri Mata Vaishno Devi University</div></footer>
 <script>
-function submitPayment(){
- const n=document.getElementById('name').value.trim(),r=document.getElementById('roll').value.trim(),u=document.getElementById('utr').value.trim();
- const msg=document.getElementById('msg');
- if(!n||!r||!u){msg.textContent='Please enter name, roll number and UTR.';return}
- const id='FM26-'+Date.now().toString().slice(-8);
- document.getElementById('tid').textContent='TICKET ID: '+id;
- document.getElementById('tn').textContent=n;
- document.getElementById('td').textContent=r+' • '+document.getElementById('cat').value;
- document.getElementById('ticketCard').style.display='block';
- msg.textContent='Demo submission created. This prototype does not verify payments yet.';
- document.getElementById('ticketCard').scrollIntoView({behavior:'smooth',block:'center'});
+const SUPABASE_URL='https://sydxhbamuobtimsqnzyu.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_CkwLvVJdxPGbi5YjR9B24Q_7dMyN-To';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+let settings={};
+
+async function loadSettings(){
+  const {data,error}=await supabaseClient.from('event_settings').select('*').eq('id',1).single();
+  if(error||!data)return;
+  settings=data;
+  const fmt=v=>v==null||v===''?'Coming Soon':'₹'+Number(v).toLocaleString('en-IN');
+  document.getElementById('seniorFee').textContent=fmt(data.senior_fee);
+  document.getElementById('juniorFee').textContent=fmt(data.junior_fee);
+  document.getElementById('upiDisplay').textContent=data.upi_id||'UPI Coming Soon';
+  document.getElementById('upiBox').style.display=data.upi_id?'block':'none';
+  document.getElementById('upiId').value=data.upi_id||'';
+  updateAmount();
 }
+function updateAmount(){
+  const cat=document.getElementById('cat').value;
+  const amount=cat==='senior'?settings.senior_fee:settings.junior_fee;
+  document.getElementById('amount').value=amount!=null?amount:'';
+  document.getElementById('payAmount').value=amount!=null?'₹'+Number(amount).toLocaleString('en-IN'):'';
+  if(settings.upi_id&&amount!=null){
+    document.getElementById('upiLink').href='upi://pay?pa='+encodeURIComponent(settings.upi_id)+'&pn='+encodeURIComponent(settings.payment_name||"Freshers'26")+'&am='+encodeURIComponent(amount)+'&cu=INR';
+  }
+}
+async function submitPayment(){
+  const name=document.getElementById('name').value.trim();
+  const roll=document.getElementById('roll').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const category=document.getElementById('cat').value;
+  const utr=document.getElementById('utr').value.trim();
+  const amount=category==='senior'?settings.senior_fee:settings.junior_fee;
+  const msg=document.getElementById('msg');
+  if(!name||!roll||!email||!utr){msg.textContent='Please enter name, roll number, email and UTR.';return;}
+  if(amount==null){msg.textContent='The contribution amount has not been announced yet.';return;}
+  msg.textContent='Submitting...';
+  const {data,error}=await supabaseClient.from('registrations').insert({
+    name,roll_number:roll,email,phone,category,amount,
+    payment_status:'pending',utr,payment_submitted_at:new Date().toISOString()
+  }).select('id,ticket_id').single();
+  if(error){msg.textContent='Unable to submit. Please check your details and try again.';return;}
+  document.getElementById('tid').textContent='REGISTRATION ID: '+data.id.slice(0,8).toUpperCase();
+  document.getElementById('tn').textContent=name;
+  document.getElementById('td').textContent=roll+' • '+(category==='senior'?'Senior':'Junior');
+  document.getElementById('ticketCard').style.display='block';
+  msg.textContent='Submitted successfully. Payment is pending organizer verification.';
+  document.getElementById('ticketCard').scrollIntoView({behavior:'smooth',block:'center'});
+}
+loadSettings();
 </script>
 </body>
 </html>
