@@ -21,7 +21,7 @@
 <div class="cards"><div class="card"><h2>Collection summary</h2><div class="row"><span>Seniors</span><b id="seniorCount">0</b></div><div class="row"><span>Juniors</span><b id="juniorCount">0</b></div><div class="row"><span>Payments pending</span><b id="pending">0</b></div><div class="row"><span>Balance</span><b id="balance">₹0</b></div></div><div class="card"><h2>Event details</h2><div class="row"><span>Date</span><b>Coming Soon</b></div><div class="row"><span>Time</span><b>Coming Soon</b></div><div class="row"><span>Venue</span><b>To Be Announced</b></div><p class="muted">Update these later from the Fees section.</p></div></div>
 </section>
 
-<section id="registrations" class="hidden"><h1>Registrations</h1><p class="muted">Live registrations and payment verification.</p><div class="card table"><table><thead><tr><th>Name</th><th>Roll</th><th>Category</th><th>Amount</th><th>UTR</th><th>Status</th><th>Action</th></tr></thead><tbody id="regTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody></table></div></section>
+<section id="registrations" class="hidden"><h1>Registrations</h1><p class="muted">Live registrations. Payments are verified automatically by the Razorpay webhook — the "Force verify" button is a support fallback only, for the rare case a payment succeeded but the webhook didn't reach the server.</p><div class="card table"><table><thead><tr><th>Name</th><th>Roll</th><th>Category</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="regTable"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody></table></div></section>
 
 <section id="checkin" class="hidden"><h1>Check-in</h1><p class="muted">Scan a guest ticket QR or enter the ticket ID manually. Each ticket can be checked in only once.</p>
 <div class="cards"><div class="card"><h2>QR scanner</h2><div id="qr-reader" style="width:100%;max-width:520px"></div><button class="btn" onclick="startScanner()">Start camera scan</button><p id="scanMsg" class="muted"></p></div>
@@ -30,16 +30,14 @@
 
 <section id="expenses" class="hidden"><h1>Expenses</h1><p class="muted">Track event spending.</p><div class="cards"><div class="card"><label>Expense name</label><input id="expenseName" placeholder="e.g. Decorations"><label>Category</label><select id="expenseCategory"><option>Other</option><option>Food</option><option>Decoration</option><option>Music</option><option>Venue</option></select><label>Amount (₹)</label><input id="expenseAmount" type="number" min="0" placeholder="0"><label>Date</label><input id="expenseDate" type="date"><label>Notes</label><textarea id="expenseNotes" rows="3"></textarea><button class="btn" onclick="addExpense()">Add expense</button><p id="expenseMsg" class="muted"></p></div><div class="card"><h2>Recent expenses</h2><div id="expenseList" class="muted">Loading...</div></div></div></section>
 
-<section id="fees" class="hidden"><h1>Fees & event details</h1><p class="muted">These values appear on the public registration page.</p>
+<section id="fees" class="hidden"><h1>Fees & event details</h1><p class="muted">These values appear on the public registration page and are used by the payment gateway to charge the correct amount.</p>
 <div class="cards">
-<div class="card"><h2>Registration & payment</h2>
+<div class="card"><h2>Registration fees</h2>
 <label>Senior fee (₹)</label><input id="seniorFee" type="number" min="0" placeholder="Not announced">
 <label>Junior fee (₹)</label><input id="juniorFee" type="number" min="0" placeholder="Not announced">
 <label>Receiver / payment name</label><input id="paymentName" placeholder="Freshers'26">
-<label>Receiver UPI ID</label><input id="upiId" inputmode="email" placeholder="example@upi">
-<label>Receiver QR code</label><input id="qrFile" type="file" accept="image/png,image/jpeg,image/webp"><input id="qrUrl" type="url" placeholder="QR URL (optional)">
-<p class="muted" style="font-size:12px">Use a public QR image URL for now. Never store UPI PIN, OTP, card or bank-login details here.</p>
-<button class="btn" onclick="savePaymentSettings()">Save payment settings</button><p id="settingsMsg" class="muted"></p>
+<p class="muted" style="font-size:12px">Payments are collected automatically through Razorpay. There's no UPI ID or QR code to manage here anymore.</p>
+<button class="btn" onclick="savePaymentSettings()">Save fees</button><p id="settingsMsg" class="muted"></p>
 </div>
 <div class="card"><h2>Event details</h2><label>Date</label><input id="eventDate" placeholder="Coming Soon"><label>Time</label><input id="eventTime" placeholder="Coming Soon"><label>Venue</label><input id="eventVenue" placeholder="Coming Soon"><label>Description</label><textarea id="eventDescription" rows="4">A night to welcome our new batch into the M&C family — music, lights, food and memories.</textarea><button class="btn" onclick="saveEventDetails()">Save event details</button><p id="eventMsg" class="muted"></p></div>
 </div>
@@ -51,6 +49,7 @@ const SUPABASE_URL='https://sydxhbamuobtimsqnzyu.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_CkwLvVJdxPGbi5YjR9B24Q_7dMyN-To';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 let currentProfile=null;
+let totalCollected=0, totalSpent=0;
 
 (async function protect(){
  const {data:{session}}=await supabaseClient.auth.getSession();
@@ -77,40 +76,22 @@ async function loadSettings(){
  if(!data)return;
  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??''};
  set('seniorFee',data.senior_fee);set('juniorFee',data.junior_fee);set('paymentName',data.payment_name);
- set('upiId',data.upi_id ? (data.upi_id.includes('%') ? decodeURIComponent(data.upi_id) : data.upi_id) : '');set('qrUrl',data.qr_url);set('eventDate',data.event_date);set('eventTime',data.event_time);
+ set('eventDate',data.event_date);set('eventTime',data.event_time);
  set('eventVenue',data.venue);set('eventDescription',data.description);
 }
 
 async function savePaymentSettings(){
   const msg=document.getElementById('settingsMsg');
   msg.textContent='Saving...';
-  let qrUrl=document.getElementById('qrUrl').value.trim()||null;
-  const file=document.getElementById('qrFile')?.files?.[0];
-
-  if(file){
-    if(file.size>2*1024*1024){msg.textContent='QR image must be 2 MB or smaller.';return;}
-    const ext=(file.name.split('.').pop()||'png').toLowerCase().replace(/[^a-z0-9]/g,'');
-    const path='receiver-qr.'+(ext||'png');
-    const {error:uploadError}=await supabaseClient.storage.from('payment-assets').upload(path,file,{upsert:true,contentType:file.type||'image/png'});
-    if(uploadError){msg.textContent='QR upload failed: '+uploadError.message;return;}
-    const {data:urlData}=supabaseClient.storage.from('payment-assets').getPublicUrl(path);
-    qrUrl=urlData.publicUrl;
-  }
-
-  let upi=document.getElementById('upiId').value.trim()||null;
-  if(upi && upi.includes('%')){try{upi=decodeURIComponent(upi)}catch(e){}}
 
   const payload={
     senior_fee:Number(document.getElementById('seniorFee').value)||null,
     junior_fee:Number(document.getElementById('juniorFee').value)||null,
-    payment_name:document.getElementById('paymentName').value.trim()||null,
-    upi_id:upi,
-    qr_url:qrUrl
+    payment_name:document.getElementById('paymentName').value.trim()||null
   };
   const {error}=await supabaseClient.from('event_settings').update(payload).eq('id',1);
-  if(error){msg.textContent='Could not save payment settings: '+error.message;return;}
-  if(qrUrl) document.getElementById('qrUrl').value=qrUrl;
-  msg.textContent='Payment settings + QR saved successfully.';
+  if(error){console.error('Save settings error:',error);msg.textContent='Could not save fees: '+error.message;return;}
+  msg.textContent='Fees saved successfully.';
 }
 async function saveEventDetails(){
  const msg=document.getElementById('eventMsg');
@@ -122,32 +103,36 @@ async function saveEventDetails(){
 async function loadRegistrations(){
  const body=document.getElementById('regTable');
  if(!body)return;
- const {data,error}=await supabaseClient.from('registrations').select('id,name,roll_number,category,amount,utr,payment_status,ticket_id,ticket_status').order('created_at',{ascending:false}).limit(100);
- if(error){body.innerHTML='<tr><td colspan="7" class="empty">Could not load registrations.</td></tr>';return}
- if(!data?.length){body.innerHTML='<tr><td colspan="7" class="empty">No registrations yet.</td></tr>';return}
- body.innerHTML=data.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.roll_number)}</td><td>${esc(r.category)}</td><td>₹${Number(r.amount||0).toLocaleString('en-IN')}</td><td>${esc(r.utr||'—')}</td><td>${esc(r.payment_status||'pending')}</td><td>${r.payment_status==='verified'?'<span class="badge">Verified</span>':`<button class="btn" onclick="verifyPayment('${r.id}')">Verify</button> <button class="btn" onclick="rejectPayment('${r.id}')">Reject</button>`}</td></tr>`).join('');
+ const {data,error}=await supabaseClient.from('registrations').select('id,name,roll_number,category,amount,payment_status,ticket_id,ticket_status,checked_in_at').order('created_at',{ascending:false}).limit(100);
+ if(error){console.error('Load registrations error:',error);body.innerHTML='<tr><td colspan="6" class="empty">Could not load registrations.</td></tr>';return}
+ if(!data?.length){body.innerHTML='<tr><td colspan="6" class="empty">No registrations yet.</td></tr>';return}
+ body.innerHTML=data.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.roll_number)}</td><td>${esc(r.category)}</td><td>₹${Number(r.amount||0).toLocaleString('en-IN')}</td><td>${esc(r.payment_status||'pending')}</td><td>${r.payment_status==='verified'?'<span class="badge">Verified</span>':`<button class="btn" onclick="verifyPayment('${r.id}')">Force verify</button>`}</td></tr>`).join('');
  updateOverview(data);
 }
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 async function verifyPayment(id){
+  if(!confirm('This bypasses Razorpay verification and marks the registration as paid directly. Only use this if you have confirmed the payment succeeded in your Razorpay dashboard. Continue?'))return;
   const ticket='FR26-'+crypto.randomUUID().replaceAll('-','').slice(0,12).toUpperCase();
   const {error}=await supabaseClient.from('registrations').update({
     payment_status:'verified',ticket_status:'issued',ticket_id:ticket,
     ticket_qr_token:ticket,verified_at:new Date().toISOString(),
     verified_by:currentProfile?.id||null
   }).eq('id',id);
-  if(error){alert('Verification failed. Check the registrations columns/RLS.');return}
+  if(error){console.error('Verify payment error:',error);alert('Verification failed: '+error.message);return}
   await loadRegistrations();
-}
-async function rejectPayment(id){
- const {error}=await supabaseClient.from('registrations').update({payment_status:'rejected'}).eq('id',id);
- if(error){alert('Could not reject payment.');return}
- await loadRegistrations();
 }
 function updateOverview(rows){
  const n=rows.length, senior=rows.filter(r=>String(r.category).toLowerCase()==='senior').length,junior=n-senior,pending=rows.filter(r=>String(r.payment_status).toLowerCase()!=='verified').length,collected=rows.filter(r=>String(r.payment_status).toLowerCase()==='verified').reduce((s,r)=>s+Number(r.amount||0),0);
+ const checkedIn=rows.filter(r=>r.checked_in_at).length;
+ totalCollected=collected;
  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
- set('regCount',n);set('seniorCount',senior);set('juniorCount',junior);set('pending',pending);set('collected','₹'+collected.toLocaleString('en-IN'));
+ set('regCount',n);set('seniorCount',senior);set('juniorCount',junior);set('pending',pending);set('collected','₹'+collected.toLocaleString('en-IN'));set('checkCount',checkedIn);
+ updateBalance();
+}
+function updateBalance(){
+ const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+ set('spent','₹'+totalSpent.toLocaleString('en-IN'));
+ set('balance','₹'+(totalCollected-totalSpent).toLocaleString('en-IN'));
 }
 async function addExpense(){
  const msg=document.getElementById('expenseMsg');
@@ -160,12 +145,14 @@ async function addExpense(){
 async function loadExpenses(){
  const list=document.getElementById('expenseList');if(!list)return;
  const {data,error}=await supabaseClient.from('expenses').select('date,expense,category,amount,notes').order('date',{ascending:false}).limit(20);
- if(error){list.textContent='Could not load expenses.';return}
+ if(error){console.error('Load expenses error:',error);list.textContent='Could not load expenses.';return}
  list.innerHTML=data?.length?data.map(x=>`<div class="row"><span>${esc(x.expense)}<small style="display:block;color:var(--muted)">${esc(x.category)} • ${esc(x.date)}</small></span><b>₹${Number(x.amount||0).toLocaleString('en-IN')}</b></div>`).join(''):'No expenses yet.';
+ totalSpent=(data||[]).reduce((s,x)=>s+Number(x.amount||0),0);
+ updateBalance();
 }
 </script>
-<script src="https://unpkg.com/html5-qrcode">
-
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script>
 let scanner=null;
 async function startScanner(){
   const msg=document.getElementById('scanMsg');

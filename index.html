@@ -28,6 +28,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 <nav class="nav"><div class="navin"><a class="brand" href="#"><img class="brand-logo" src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU logo"><span>FRESHERS'26<small>Mathematics & Computing • SMVDU</small></span></a><div class="links"><a href="#contribute">Contribute</a><a href="#ticket">Ticket</a><a href="#about">About</a></div></div></nav>
@@ -45,35 +46,23 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 
 <section><div class="wrap"><div class="card" style="display:flex;align-items:center;gap:16px;border-left:5px solid var(--orange)"><img src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU logo" style="width:72px;height:60px;object-fit:contain"><div><b>SMVDU • Mathematics & Computing</b><div class="sub" style="margin:3px 0 0">Freshers'26 contribution & entry portal</div></div></div></div></section>
 <section id="contribute"><div class="wrap">
-<h2 class="section-title">Contribution</h2><p class="sub">Choose your category. The organizer-controlled amount and official UPI details appear below.</p>
+<h2 class="section-title">Contribution</h2><p class="sub">Choose your category, then fill in your details and pay securely online.</p>
 <div class="grid">
 <div class="card category-card" id="seniorCard" onclick="chooseCategory('senior')" style="cursor:pointer"><h3>Senior</h3><div class="amount" id="seniorFee">₹ Coming Soon</div><p class="sub">Tap to select Senior</p></div>
 <div class="card category-card" id="juniorCard" onclick="chooseCategory('junior')" style="cursor:pointer"><h3>Junior</h3><div class="amount" id="juniorFee">₹ Coming Soon</div><p class="sub">Tap to select Junior</p></div>
-<div class="card"><h3>Payment</h3><div class="amount" id="upiDisplay">UPI Coming Soon</div><p class="sub" id="paymentHint">Official payment details will appear after organizers publish them.</p></div>
+<div class="card"><h3>Payment</h3><div class="amount">Secure online payment</div><p class="sub">Pay instantly by card, UPI, or netbanking. Your ticket is issued automatically the moment payment succeeds.</p></div>
 </div>
-<div id="upiBox" class="card" style="margin-top:16px;display:none">
-<h3>Pay via UPI</h3><p class="sub">Use the official UPI details below. Never share your UPI PIN, OTP or banking password.</p>
-<div class="row"><div><label>UPI ID</label><input id="upiId" readonly></div><div><label>Amount</label><input id="payAmount" readonly></div></div>
-<div class="btns"><a id="upiLink" class="btn primary" href="#">Open UPI app</a></div>
-<div id="qrPaymentBox" style="margin-top:18px;display:none;text-align:center">
-  <label style="text-align:left">Scan QR to pay</label>
-  <img id="paymentQr" alt="Official payment QR code" style="display:block;width:220px;height:220px;object-fit:contain;margin:10px auto;border:10px solid #fff;border-radius:12px">
-  <p class="sub">Scan this official QR and pay the selected Senior/Junior amount.</p>
-</div>
-</div>
-<div class="notice" style="margin-top:16px">Only pay using the official UPI details displayed here. Your ticket is issued only after an organizer verifies the transaction.</div>
 </div></section>
 
-<section id="ticket"><div class="wrap"><h2 class="section-title">Registration & Ticket</h2><p class="sub">After paying through the official UPI details, submit your UTR. Your ticket is issued only after payment verification.</p>
+<section id="ticket"><div class="wrap"><h2 class="section-title">Registration & Ticket</h2><p class="sub">Fill in your details, then pay online. Your ticket is issued automatically — no manual verification needed.</p>
 <div class="card form">
 <div class="row"><div><label>Name</label><input id="name" placeholder="Your full name"></div><div><label>Roll Number</label><input id="roll" placeholder="e.g. 25bcm050"></div></div>
 <div class="row"><div><label>Email</label><input id="email" type="email" placeholder="Your email"></div><div><label>Phone</label><input id="phone" inputmode="tel" placeholder="Your phone number"></div></div>
 <div class="row"><div><label>Category</label><select id="cat" onchange="updateAmount()"><option value="senior">Senior</option><option value="junior">Junior</option></select></div><div><label>Amount</label><input id="amount" readonly placeholder="Coming Soon"></div></div>
-<label>UTR / Transaction ID</label><input id="utr" placeholder="Enter the UTR after payment">
-<div class="btns"><button class="btn primary" onclick="submitPayment()">Submit registration & UTR</button></div>
+<div class="btns"><button class="btn primary" id="payBtn" onclick="startPayment()">Pay & register</button></div>
 <p id="msg" class="sub"></p>
 <div class="card" style="margin-top:16px"><h3>Check ticket status</h3><div class="row"><div><label>Ticket ID</label><input id="lookupTicket" placeholder="FR26-..."></div><div class="btns" style="align-items:end"><button class="btn primary" onclick="lookupTicket()">Check status</button></div></div><p id="lookupMsg" class="sub"></p><div id="lookupQr" style="margin-top:12px"></div></div>
-<div id="ticketCard" class="ticket"><div class="ticket-top"><b>FRESHERS'26</b><div style="opacity:.8">MATHEMATICS & COMPUTING • SMVDU</div></div><div class="ticket-body"><div><div class="ticket-id" id="tid"></div><h2 id="tn"></h2><p id="td" class="sub"></p><b>PAYMENT VERIFICATION PENDING</b></div></div></div>
+<div id="ticketCard" class="ticket"><div class="ticket-top"><b>FRESHERS'26</b><div style="opacity:.8">MATHEMATICS & COMPUTING • SMVDU</div></div><div class="ticket-body"><div><div class="ticket-id" id="tid"></div><h2 id="tn"></h2><p id="td" class="sub"></p><b id="tstatus">PAYMENT PENDING</b></div></div></div>
 </div></div></section>
 
 <section id="about"><div class="wrap"><h2 class="section-title">About Freshers'26</h2><p class="sub">A contribution and entry portal for the Mathematics & Computing Freshers'26 event at Shri Mata Vaishno Devi University.</p><div class="grid"><div class="card"><h3>📅 Date</h3><p class="soon">Coming Soon</p></div><div class="card"><h3>📍 Venue</h3><p class="soon">To Be Announced</p></div><div class="card"><h3>🎟️ Entry</h3><p>Verified contributors receive a unique event ticket.</p></div></div></div></section>
@@ -87,25 +76,11 @@ let settings={};
 
 async function loadSettings(){
   const {data,error}=await supabaseClient.from('event_settings').select('*').eq('id',1).single();
-  if(error||!data)return;
+  if(error||!data){console.error('Load settings error:',error);return;}
   settings={...data};
-  if(settings.upi_id && settings.upi_id.includes('%')) {
-    try { settings.upi_id=decodeURIComponent(settings.upi_id); } catch(e) {}
-  }
   const fmt=v=>v==null||v===''?'Coming Soon':'₹'+Number(v).toLocaleString('en-IN');
   document.getElementById('seniorFee').textContent=fmt(data.senior_fee);
   document.getElementById('juniorFee').textContent=fmt(data.junior_fee);
-  const upi=settings.upi_id||'';
-  document.getElementById('upiDisplay').textContent=upi||'UPI Coming Soon';
-  document.getElementById('upiBox').style.display=(upi||data.qr_url)?'block':'none';
-
-  // QR elements are optional on this page; don't let a missing element break UPI loading.
-  const qrBox=document.getElementById('qrPaymentBox');
-  const paymentQr=document.getElementById('paymentQr');
-  if(qrBox) qrBox.style.display=data.qr_url?'block':'none';
-  if(paymentQr && data.qr_url) paymentQr.src=data.qr_url;
-
-  document.getElementById('upiId').value=upi;
   updateAmount();
 }
 function chooseCategory(category){
@@ -119,60 +94,119 @@ function updateAmount(){
   const cat=document.getElementById('cat').value;
   const amount=cat==='senior'?settings.senior_fee:settings.junior_fee;
 
-  document.getElementById('amount').value=amount!=null?amount:'';
-  document.getElementById('payAmount').value=amount!=null?'₹'+Number(amount).toLocaleString('en-IN'):'';
+  document.getElementById('amount').value=amount!=null?'₹'+Number(amount).toLocaleString('en-IN'):'';
 
   document.getElementById('seniorCard').classList.toggle('selected',cat==='senior');
   document.getElementById('juniorCard').classList.toggle('selected',cat==='junior');
 
-  if(settings.upi_id&&amount!=null){
-    const upi=(settings.upi_id||'').replace(/%40/gi,'@').trim();
-    const params=new URLSearchParams({
-      pa:upi,
-      pn:settings.payment_name||"Freshers'26",
-      am:Number(amount).toFixed(2),
-      cu:'INR'
-    });
-    document.getElementById('upiLink').href='upi://pay?'+params.toString();
-  }
+  const payBtn=document.getElementById('payBtn');
+  payBtn.disabled=(amount==null);
+  payBtn.style.opacity=(amount==null)?'.5':'';
 }
 
-async function submitPayment(){
+async function startPayment(){
   const name=document.getElementById('name').value.trim();
   const roll=document.getElementById('roll').value.trim();
   const email=document.getElementById('email').value.trim();
   const phone=document.getElementById('phone').value.trim();
   const category=document.getElementById('cat').value;
-  const utr=document.getElementById('utr').value.trim();
   const amount=category==='senior'?settings.senior_fee:settings.junior_fee;
   const msg=document.getElementById('msg');
-  if(!name||!roll||!email||!utr){msg.textContent='Please enter name, roll number, email and UTR.';return;}
+  const payBtn=document.getElementById('payBtn');
+
+  if(!name||!roll||!email){msg.textContent='Please enter name, roll number and email.';return;}
   if(amount==null){msg.textContent='The contribution amount has not been announced yet.';return;}
-  msg.textContent='Submitting...';
-  const {error}=await supabaseClient.from('registrations').insert({
+
+  payBtn.disabled=true;
+  msg.textContent='Creating your registration...';
+
+  const {data:reg,error:insertErr}=await supabaseClient.from('registrations').insert({
     name,
     roll_number:roll,
     email,
     phone,
     category,
     amount,
-    payment_status:'pending',
-    utr,
-    payment_submitted_at:new Date().toISOString()
-  });
+    payment_status:'pending'
+  }).select('id').single();
 
-  if(error){
-    console.error('Registration insert error:', error);
-    msg.textContent='Unable to submit: '+error.message;
+  if(insertErr||!reg){
+    console.error('Registration insert error:',insertErr);
+    msg.textContent='Unable to start registration: '+(insertErr?.message||'unknown error');
+    payBtn.disabled=false;
     return;
   }
 
-  document.getElementById('tid').textContent='REGISTRATION SUBMITTED';
-  document.getElementById('tn').textContent=name;
-  document.getElementById('td').textContent=roll+' • '+(category==='senior'?'Senior':'Junior');
-  document.getElementById('ticketCard').style.display='block';
-  msg.textContent='Submitted successfully. Payment is pending organizer verification.';
-  document.getElementById('ticketCard').scrollIntoView({behavior:'smooth',block:'center'});
+  msg.textContent='Opening secure payment...';
+
+  let orderRes;
+  try{
+    const resp=await fetch('/api/create-order',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({registration_id:reg.id})
+    });
+    orderRes=await resp.json();
+    if(!resp.ok) throw new Error(orderRes.error||'Could not start payment');
+  }catch(e){
+    console.error('create-order failed:',e);
+    msg.textContent='Could not start payment: '+e.message;
+    payBtn.disabled=false;
+    return;
+  }
+
+  const rzp=new Razorpay({
+    key:orderRes.key_id,
+    amount:orderRes.amount,
+    currency:orderRes.currency,
+    name:orderRes.payment_name,
+    description:"Freshers'26 • "+(category==='senior'?'Senior':'Junior')+' contribution',
+    order_id:orderRes.order_id,
+    prefill:{name,email,contact:phone},
+    theme:{color:'#176b43'},
+    handler:async function(response){
+      msg.textContent='Verifying payment...';
+      try{
+        const verifyResp=await fetch('/api/verify-payment',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            razorpay_order_id:response.razorpay_order_id,
+            razorpay_payment_id:response.razorpay_payment_id,
+            razorpay_signature:response.razorpay_signature
+          })
+        });
+        const verifyData=await verifyResp.json();
+        if(!verifyResp.ok) throw new Error(verifyData.error||'Verification failed');
+
+        document.getElementById('tid').textContent=verifyData.ticket_id;
+        document.getElementById('tn').textContent=name;
+        document.getElementById('td').textContent=roll+' • '+(category==='senior'?'Senior':'Junior');
+        document.getElementById('tstatus').textContent='TICKET ISSUED';
+        document.getElementById('ticketCard').style.display='block';
+        msg.textContent='Payment successful! Your ticket has been issued.';
+        document.getElementById('ticketCard').scrollIntoView({behavior:'smooth',block:'center'});
+      }catch(e){
+        console.error('verify-payment failed:',e);
+        msg.textContent='Payment received but verification failed. Please check ticket status below with your registration, or contact an organizer.';
+      }
+      payBtn.disabled=false;
+    },
+    modal:{
+      ondismiss:function(){
+        msg.textContent='Payment cancelled. You can try again.';
+        payBtn.disabled=false;
+      }
+    }
+  });
+
+  rzp.on('payment.failed',function(response){
+    console.error('Razorpay payment failed:',response.error);
+    msg.textContent='Payment failed: '+(response.error?.description||'please try again.');
+    payBtn.disabled=false;
+  });
+
+  rzp.open();
 }
 loadSettings();
 
@@ -183,7 +217,7 @@ async function lookupTicket(){
   box.innerHTML='';
   if(!id){msg.textContent='Enter your ticket ID.';return;}
   const {data,error}=await supabaseClient.rpc('get_ticket_status',{p_ticket_id:id});
-  if(error||!data?.length){msg.textContent='Ticket not found.';return;}
+  if(error||!data?.length){console.error('Ticket lookup error:',error);msg.textContent='Ticket not found.';return;}
   const t=data[0];
   if(t.ticket_status!=='issued'){msg.textContent='Payment is still pending verification.';return;}
   msg.textContent=t.checked_in?'Ticket verified. Already checked in.':'Ticket issued and valid.';

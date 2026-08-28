@@ -34,9 +34,9 @@ async function login(){
  const error=document.getElementById('error'); error.textContent='';
  if(!email||!password){error.textContent='Enter your email and password.';return;}
  const {data,error:authError}=await supabaseClient.auth.signInWithPassword({email,password});
- if(authError){error.textContent='Invalid email or password.';return;}
+ if(authError){console.error('Login error:',authError);error.textContent='Invalid email or password.';return;}
  const {data:profile,error:profileError}=await supabaseClient.from('profiles').select('email,role,approved,full_name').eq('id',data.user.id).single();
- if(profileError||!profile||!profile.approved){await supabaseClient.auth.signOut();error.textContent='Your organizer account is pending approval or disabled.';return;}
+ if(profileError||!profile||!profile.approved){console.error('Profile check error:',profileError);await supabaseClient.auth.signOut();error.textContent='Your organizer account is pending approval or disabled.';return;}
  location.href='admin.html';
 }
 document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
