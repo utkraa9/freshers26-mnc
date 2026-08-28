@@ -89,11 +89,17 @@ async function loadSettings(){
   const fmt=v=>v==null||v===''?'Coming Soon':'₹'+Number(v).toLocaleString('en-IN');
   document.getElementById('seniorFee').textContent=fmt(data.senior_fee);
   document.getElementById('juniorFee').textContent=fmt(data.junior_fee);
-  document.getElementById('upiDisplay').textContent=data.upi_id||'UPI Coming Soon';
-  document.getElementById('upiBox').style.display=(data.upi_id||data.qr_url)?'block':'none';
-  document.getElementById('qrPaymentBox').style.display=data.qr_url?'block':'none';
-  if(data.qr_url) document.getElementById('paymentQr').src=data.qr_url;
-  document.getElementById('upiId').value=data.upi_id||'';
+  const upi=settings.upi_id||'';
+  document.getElementById('upiDisplay').textContent=upi||'UPI Coming Soon';
+  document.getElementById('upiBox').style.display=(upi||data.qr_url)?'block':'none';
+
+  // QR elements are optional on this page; don't let a missing element break UPI loading.
+  const qrBox=document.getElementById('qrPaymentBox');
+  const paymentQr=document.getElementById('paymentQr');
+  if(qrBox) qrBox.style.display=data.qr_url?'block':'none';
+  if(paymentQr && data.qr_url) paymentQr.src=data.qr_url;
+
+  document.getElementById('upiId').value=upi;
   updateAmount();
 }
 function updateAmount(){
@@ -102,7 +108,14 @@ function updateAmount(){
   document.getElementById('amount').value=amount!=null?amount:'';
   document.getElementById('payAmount').value=amount!=null?'₹'+Number(amount).toLocaleString('en-IN'):'';
   if(settings.upi_id&&amount!=null){
-    document.getElementById('upiLink').href='upi://pay?pa='+encodeURIComponent(settings.upi_id)+'&pn='+encodeURIComponent(settings.payment_name||"Freshers'26")+'&am='+encodeURIComponent(amount)+'&cu=INR';
+    const upi=(settings.upi_id||'').replace(/%40/gi,'@').trim();
+    const params=new URLSearchParams({
+      pa:upi,
+      pn:settings.payment_name||"Freshers'26",
+      am:Number(amount).toFixed(2),
+      cu:'INR'
+    });
+    document.getElementById('upiLink').href='upi://pay?'+params.toString();
   }
 }
 async function submitPayment(){
