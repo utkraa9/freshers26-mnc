@@ -23,7 +23,10 @@
 
 <section id="registrations" class="hidden"><h1>Registrations</h1><p class="muted">Live registrations and payment verification.</p><div class="card table"><table><thead><tr><th>Name</th><th>Roll</th><th>Category</th><th>Amount</th><th>UTR</th><th>Status</th><th>Action</th></tr></thead><tbody id="regTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody></table></div></section>
 
-<section id="checkin" class="hidden"><h1>QR check-in</h1><p class="muted">Scan a guest's ticket QR or type the ticket ID manually.</p><div class="card"><button class="btn" onclick="alert('Camera scanning will be connected with the real ticket QR backend.')">Start camera scan</button><label>Ticket ID</label><input id="ticket" placeholder="SMVDU-FR26-0001"><button class="btn" style="margin-top:12px" onclick="manualCheck()">Check in</button><p id="checkMsg" class="muted"></p></div></section>
+<section id="checkin" class="hidden"><h1>Check-in</h1><p class="muted">Scan a guest ticket QR or enter the ticket ID manually. Each ticket can be checked in only once.</p>
+<div class="cards"><div class="card"><h2>QR scanner</h2><div id="qr-reader" style="width:100%;max-width:520px"></div><button class="btn" onclick="startScanner()">Start camera scan</button><p id="scanMsg" class="muted"></p></div>
+<div class="card"><h2>Manual check-in</h2><label>Ticket ID</label><input id="checkTicket" placeholder="FR26-..."><button class="btn" onclick="checkIn(document.getElementById('checkTicket').value)" style="margin-top:12px">Check in</button><p id="checkMsg" class="muted"></p></div></div>
+</section>
 
 <section id="expenses" class="hidden"><h1>Expenses</h1><p class="muted">Track event spending.</p><div class="cards"><div class="card"><label>Expense name</label><input id="expenseName" placeholder="e.g. Decorations"><label>Category</label><select id="expenseCategory"><option>Other</option><option>Food</option><option>Decoration</option><option>Music</option><option>Venue</option></select><label>Amount (₹)</label><input id="expenseAmount" type="number" min="0" placeholder="0"><label>Date</label><input id="expenseDate" type="date"><label>Notes</label><textarea id="expenseNotes" rows="3"></textarea><button class="btn" onclick="addExpense()">Add expense</button><p id="expenseMsg" class="muted"></p></div><div class="card"><h2>Recent expenses</h2><div id="expenseList" class="muted">Loading...</div></div></div></section>
 
@@ -34,7 +37,7 @@
 <label>Junior fee (₹)</label><input id="juniorFee" type="number" min="0" placeholder="Not announced">
 <label>Receiver / payment name</label><input id="paymentName" placeholder="Freshers'26">
 <label>Receiver UPI ID</label><input id="upiId" inputmode="email" placeholder="example@upi">
-<label>QR code image URL</label><input id="qrUrl" type="url" placeholder="https://.../qr.png">
+<label>Receiver QR code</label><input id="qrFile" type="file" accept="image/png,image/jpeg,image/webp"><input id="qrUrl" type="url" placeholder="QR URL (optional)">
 <p class="muted" style="font-size:12px">Use a public QR image URL for now. Never store UPI PIN, OTP, card or bank-login details here.</p>
 <button class="btn" onclick="savePaymentSettings()">Save payment settings</button><p id="settingsMsg" class="muted"></p>
 </div>
@@ -103,9 +106,14 @@ async function loadRegistrations(){
 }
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 async function verifyPayment(id){
- const {error}=await supabaseClient.from('registrations').update({payment_status:'verified',ticket_status:'issued'}).eq('id',id);
- if(error){alert('Verification failed.');return}
- await loadRegistrations();
+  const ticket='FR26-'+crypto.randomUUID().replaceAll('-','').slice(0,12).toUpperCase();
+  const {error}=await supabaseClient.from('registrations').update({
+    payment_status:'verified',ticket_status:'issued',ticket_id:ticket,
+    ticket_qr_token:ticket,verified_at:new Date().toISOString(),
+    verified_by:currentProfile?.id||null
+  }).eq('id',id);
+  if(error){alert('Verification failed. Check the registrations columns/RLS.');return}
+  await loadRegistrations();
 }
 async function rejectPayment(id){
  const {error}=await supabaseClient.from('registrations').update({payment_status:'rejected'}).eq('id',id);
@@ -130,6 +138,37 @@ async function loadExpenses(){
  const {data,error}=await supabaseClient.from('expenses').select('date,expense,category,amount,notes').order('date',{ascending:false}).limit(20);
  if(error){list.textContent='Could not load expenses.';return}
  list.innerHTML=data?.length?data.map(x=>`<div class="row"><span>${esc(x.expense)}<small style="display:block;color:var(--muted)">${esc(x.category)} • ${esc(x.date)}</small></span><b>₹${Number(x.amount||0).toLocaleString('en-IN')}</b></div>`).join(''):'No expenses yet.';
+}
+</script>
+<script src="https://unpkg.com/html5-qrcode">
+
+let scanner=null;
+async function startScanner(){
+  const msg=document.getElementById('scanMsg');
+  try{
+    if(scanner){await scanner.clear().catch(()=>{});}
+    scanner=new Html5Qrcode("qr-reader");
+    await scanner.start({facingMode:"environment"},{fps:10,qrbox:{width:250,height:250}},
+      async text=>{await scanner.stop().catch(()=>{}); await checkIn(text.trim());},
+      ()=>{});
+    msg.textContent='Camera active. Point it at the ticket QR.';
+  }catch(e){msg.textContent='Camera could not start. Use manual ticket ID check-in.';}
+}
+async function checkIn(ticketId){
+  const msg=document.getElementById('checkMsg');
+  ticketId=(ticketId||'').trim();
+  if(!ticketId){msg.textContent='Enter a ticket ID.';return;}
+  const {data,error}=await supabaseClient.from('registrations')
+    .select('id,name,roll_number,ticket_id,ticket_status,checked_in_at')
+    .eq('ticket_id',ticketId).maybeSingle();
+  if(error||!data){msg.textContent='Invalid ticket.';return;}
+  if(data.ticket_status!=='issued'){msg.textContent='Ticket is not issued/verified.';return;}
+  if(data.checked_in_at){msg.textContent='Already checked in: '+data.name;return;}
+  const {error:upErr}=await supabaseClient.from('registrations')
+    .update({checked_in_at:new Date().toISOString()}).eq('id',data.id).is('checked_in_at',null);
+  if(upErr){msg.textContent='Check-in failed.';return;}
+  msg.textContent='✓ Checked in: '+data.name+' ('+data.roll_number+')';
+  loadRegistrations();
 }
 </script>
 </body></html>
