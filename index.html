@@ -21,6 +21,7 @@ section{padding:46px 0}.section-title{font-size:30px;margin:0 0 8px}.sub{color:v
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 8px 30px rgba(16,21,37,.04)}
 .card h3{margin:0 0 10px}.amount{font-size:30px;font-weight:900;margin:14px 0}.soon{color:#7b8495;font-weight:800}.notice{background:#fff8e8;border:1px solid #f3dfad;padding:14px 16px;border-radius:14px;color:#755b1a}
 .form{max-width:720px}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;font-weight:800;font-size:13px;margin:12px 0 6px}input,select{width:100%;padding:14px;border:1px solid #dfe3ea;border-radius:12px;font:inherit;background:white}button{cursor:pointer}
+.category-card{transition:.15s ease}.category-card.selected{border:2px solid var(--orange);box-shadow:0 0 0 3px rgba(243,154,22,.12)}
 .ticket{display:none;margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:24px;overflow:hidden}.ticket-top{background:linear-gradient(135deg,#171b42,#5b45e6);color:#fff;padding:24px}.ticket-body{padding:22px}.ticket-id{font-weight:900;letter-spacing:1px}.qr{width:130px;height:130px;border:10px solid #fff;border-radius:10px;background:repeating-linear-gradient(45deg,#111 0 4px,#fff 4px 8px)}
 footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px}
 @media(max-width:760px){.links{gap:12px;font-size:12px}.hero{grid-template-columns:1fr;padding-top:45px}.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.art{min-height:330px}.math{font-size:44px}h1{letter-spacing:-3px}}
@@ -46,14 +47,19 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 <section id="contribute"><div class="wrap">
 <h2 class="section-title">Contribution</h2><p class="sub">Choose your category. The organizer-controlled amount and official UPI details appear below.</p>
 <div class="grid">
-<div class="card"><h3>Senior</h3><div class="amount" id="seniorFee">₹ Coming Soon</div><p class="sub">Current contribution amount</p></div>
-<div class="card"><h3>Junior</h3><div class="amount" id="juniorFee">₹ Coming Soon</div><p class="sub">Current contribution amount</p></div>
+<div class="card category-card" id="seniorCard" onclick="chooseCategory('senior')" style="cursor:pointer"><h3>Senior</h3><div class="amount" id="seniorFee">₹ Coming Soon</div><p class="sub">Tap to select Senior</p></div>
+<div class="card category-card" id="juniorCard" onclick="chooseCategory('junior')" style="cursor:pointer"><h3>Junior</h3><div class="amount" id="juniorFee">₹ Coming Soon</div><p class="sub">Tap to select Junior</p></div>
 <div class="card"><h3>Payment</h3><div class="amount" id="upiDisplay">UPI Coming Soon</div><p class="sub" id="paymentHint">Official payment details will appear after organizers publish them.</p></div>
 </div>
 <div id="upiBox" class="card" style="margin-top:16px;display:none">
 <h3>Pay via UPI</h3><p class="sub">Use the official UPI details below. Never share your UPI PIN, OTP or banking password.</p>
 <div class="row"><div><label>UPI ID</label><input id="upiId" readonly></div><div><label>Amount</label><input id="payAmount" readonly></div></div>
 <div class="btns"><a id="upiLink" class="btn primary" href="#">Open UPI app</a></div>
+<div id="qrPaymentBox" style="margin-top:18px;display:none;text-align:center">
+  <label style="text-align:left">Scan QR to pay</label>
+  <img id="paymentQr" alt="Official payment QR code" style="display:block;width:220px;height:220px;object-fit:contain;margin:10px auto;border:10px solid #fff;border-radius:12px">
+  <p class="sub">Scan this official QR and pay the selected Senior/Junior amount.</p>
+</div>
 </div>
 <div class="notice" style="margin-top:16px">Only pay using the official UPI details displayed here. Your ticket is issued only after an organizer verifies the transaction.</div>
 </div></section>
@@ -102,11 +108,23 @@ async function loadSettings(){
   document.getElementById('upiId').value=upi;
   updateAmount();
 }
+function chooseCategory(category){
+  const select=document.getElementById('cat');
+  select.value=category;
+  updateAmount();
+  document.getElementById('ticket').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 function updateAmount(){
   const cat=document.getElementById('cat').value;
   const amount=cat==='senior'?settings.senior_fee:settings.junior_fee;
+
   document.getElementById('amount').value=amount!=null?amount:'';
   document.getElementById('payAmount').value=amount!=null?'₹'+Number(amount).toLocaleString('en-IN'):'';
+
+  document.getElementById('seniorCard').classList.toggle('selected',cat==='senior');
+  document.getElementById('juniorCard').classList.toggle('selected',cat==='junior');
+
   if(settings.upi_id&&amount!=null){
     const upi=(settings.upi_id||'').replace(/%40/gi,'@').trim();
     const params=new URLSearchParams({
@@ -118,6 +136,7 @@ function updateAmount(){
     document.getElementById('upiLink').href='upi://pay?'+params.toString();
   }
 }
+
 async function submitPayment(){
   const name=document.getElementById('name').value.trim();
   const roll=document.getElementById('roll').value.trim();
