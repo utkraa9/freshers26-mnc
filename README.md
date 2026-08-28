@@ -1,17 +1,23 @@
 # Freshers'26 — Mathematics & Computing
 
-Free static starter website for Shri Mata Vaishno Devi University.
+Upgraded static prototype for Shri Mata Vaishno Devi University.
 
 ## Included
-- `index.html` — student-facing site
-- `admin.html` — local demo admin panel
-- Payment amounts, UPI and event details are placeholders.
-- Payment submissions remain PENDING until admin verification.
-- Verification creates a unique digital ticket with QR code.
-- CSV export is included.
+- Responsive Freshers'26 landing page
+- Senior / Junior contribution placeholders
+- Payment safety notice
+- UTR submission prototype
+- Ticket ID generation prototype
+- Admin prototype page
+- Mobile-first layout
 
-## Important before real launch
-This version stores data in browser localStorage, so it is a prototype/demo and **not suitable for real money collection across multiple devices**. For the real free deployment, connect the forms/admin workflow to a shared backend such as Google Sheets + Google Apps Script (or another free backend), and protect the admin endpoint with authentication.
+## Important
+The current ticket/UTR flow is a front-end prototype only. It does NOT verify payments or provide a shared database.
 
-## Edit later
-Search in `index.html` for `Coming Soon`, `To Be Announced`, and the amount elements to update event details. The visible site is intentionally simple and mobile-friendly.
+Before public money collection, connect the form and admin panel to a secure shared backend (for example Google Sheets + Apps Script) and add proper admin authentication.
+
+## Deployment
+Upload `index.html`, `admin.html`, and `README.md` to the GitHub repository used by the Vercel project. Vercel will redeploy automatically.
+
+## Branding
+Uses the official SMVDU logo hosted by the university website and a restrained green/orange university-inspired accent palette.
