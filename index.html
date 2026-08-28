@@ -130,12 +130,25 @@ async function submitPayment(){
   if(!name||!roll||!email||!utr){msg.textContent='Please enter name, roll number, email and UTR.';return;}
   if(amount==null){msg.textContent='The contribution amount has not been announced yet.';return;}
   msg.textContent='Submitting...';
-  const {data,error}=await supabaseClient.from('registrations').insert({
-    name,roll_number:roll,email,phone,category,amount,
-    payment_status:'pending',utr,payment_submitted_at:new Date().toISOString()
-  }).select('id,ticket_id').single();
-  if(error){msg.textContent='Unable to submit. Please check your details and try again.';return;}
-  document.getElementById('tid').textContent='REGISTRATION ID: '+data.id.slice(0,8).toUpperCase();
+  const {error}=await supabaseClient.from('registrations').insert({
+    name,
+    roll_number:roll,
+    email,
+    phone,
+    category,
+    amount,
+    payment_status:'pending',
+    utr,
+    payment_submitted_at:new Date().toISOString()
+  });
+
+  if(error){
+    console.error('Registration insert error:', error);
+    msg.textContent='Unable to submit: '+error.message;
+    return;
+  }
+
+  document.getElementById('tid').textContent='REGISTRATION SUBMITTED';
   document.getElementById('tn').textContent=name;
   document.getElementById('td').textContent=roll+' • '+(category==='senior'?'Senior':'Junior');
   document.getElementById('ticketCard').style.display='block';
