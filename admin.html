@@ -77,17 +77,41 @@ async function loadSettings(){
  if(!data)return;
  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??''};
  set('seniorFee',data.senior_fee);set('juniorFee',data.junior_fee);set('paymentName',data.payment_name);
- set('upiId',data.upi_id);set('qrUrl',data.qr_url);set('eventDate',data.event_date);set('eventTime',data.event_time);
+ set('upiId',data.upi_id ? (data.upi_id.includes('%') ? decodeURIComponent(data.upi_id) : data.upi_id) : '');set('qrUrl',data.qr_url);set('eventDate',data.event_date);set('eventTime',data.event_time);
  set('eventVenue',data.venue);set('eventDescription',data.description);
 }
 
 async function savePaymentSettings(){
- const msg=document.getElementById('settingsMsg');
- const payload={senior_fee:Number(document.getElementById('seniorFee').value)||null,junior_fee:Number(document.getElementById('juniorFee').value)||null,payment_name:document.getElementById('paymentName').value.trim()||null,upi_id:document.getElementById('upiId').value.trim()||null,qr_url:document.getElementById('qrUrl').value.trim()||null};
- const {error}=await supabaseClient.from('event_settings').update(payload).eq('id',1);
- msg.textContent=error?'Could not save payment settings. Check that the event_settings columns exist.':'Payment settings saved.';
-}
+  const msg=document.getElementById('settingsMsg');
+  msg.textContent='Saving...';
+  let qrUrl=document.getElementById('qrUrl').value.trim()||null;
+  const file=document.getElementById('qrFile')?.files?.[0];
 
+  if(file){
+    if(file.size>2*1024*1024){msg.textContent='QR image must be 2 MB or smaller.';return;}
+    const ext=(file.name.split('.').pop()||'png').toLowerCase().replace(/[^a-z0-9]/g,'');
+    const path='receiver-qr.'+(ext||'png');
+    const {error:uploadError}=await supabaseClient.storage.from('payment-assets').upload(path,file,{upsert:true,contentType:file.type||'image/png'});
+    if(uploadError){msg.textContent='QR upload failed: '+uploadError.message;return;}
+    const {data:urlData}=supabaseClient.storage.from('payment-assets').getPublicUrl(path);
+    qrUrl=urlData.publicUrl;
+  }
+
+  let upi=document.getElementById('upiId').value.trim()||null;
+  if(upi && upi.includes('%')){try{upi=decodeURIComponent(upi)}catch(e){}}
+
+  const payload={
+    senior_fee:Number(document.getElementById('seniorFee').value)||null,
+    junior_fee:Number(document.getElementById('juniorFee').value)||null,
+    payment_name:document.getElementById('paymentName').value.trim()||null,
+    upi_id:upi,
+    qr_url:qrUrl
+  };
+  const {error}=await supabaseClient.from('event_settings').update(payload).eq('id',1);
+  if(error){msg.textContent='Could not save payment settings: '+error.message;return;}
+  if(qrUrl) document.getElementById('qrUrl').value=qrUrl;
+  msg.textContent='Payment settings + QR saved successfully.';
+}
 async function saveEventDetails(){
  const msg=document.getElementById('eventMsg');
  const payload={event_date:document.getElementById('eventDate').value.trim()||null,event_time:document.getElementById('eventTime').value.trim()||null,venue:document.getElementById('eventVenue').value.trim()||null,description:document.getElementById('eventDescription').value.trim()||null};

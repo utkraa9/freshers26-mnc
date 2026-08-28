@@ -82,12 +82,17 @@ let settings={};
 async function loadSettings(){
   const {data,error}=await supabaseClient.from('event_settings').select('*').eq('id',1).single();
   if(error||!data)return;
-  settings=data;
+  settings={...data};
+  if(settings.upi_id && settings.upi_id.includes('%')) {
+    try { settings.upi_id=decodeURIComponent(settings.upi_id); } catch(e) {}
+  }
   const fmt=v=>v==null||v===''?'Coming Soon':'₹'+Number(v).toLocaleString('en-IN');
   document.getElementById('seniorFee').textContent=fmt(data.senior_fee);
   document.getElementById('juniorFee').textContent=fmt(data.junior_fee);
   document.getElementById('upiDisplay').textContent=data.upi_id||'UPI Coming Soon';
-  document.getElementById('upiBox').style.display=data.upi_id?'block':'none';
+  document.getElementById('upiBox').style.display=(data.upi_id||data.qr_url)?'block':'none';
+  document.getElementById('qrPaymentBox').style.display=data.qr_url?'block':'none';
+  if(data.qr_url) document.getElementById('paymentQr').src=data.qr_url;
   document.getElementById('upiId').value=data.upi_id||'';
   updateAmount();
 }
