@@ -21,35 +21,115 @@
 <div class="cards"><div class="card"><h2>Collection summary</h2><div class="row"><span>Seniors</span><b id="seniorCount">0</b></div><div class="row"><span>Juniors</span><b id="juniorCount">0</b></div><div class="row"><span>Payments pending</span><b id="pending">0</b></div><div class="row"><span>Balance</span><b id="balance">₹0</b></div></div><div class="card"><h2>Event details</h2><div class="row"><span>Date</span><b>Coming Soon</b></div><div class="row"><span>Time</span><b>Coming Soon</b></div><div class="row"><span>Venue</span><b>To Be Announced</b></div><p class="muted">Update these later from the Fees section.</p></div></div>
 </section>
 
-<section id="registrations" class="hidden"><h1>Registrations</h1><p class="muted">Review contributors and payment status.</p><div class="card table"><table><thead><tr><th>Name</th><th>Roll No.</th><th>Category</th><th>Amount</th><th>Status</th><th>Ticket</th></tr></thead><tbody id="regTable"><tr><td colspan="6" class="empty">No live records yet. Connect the backend to populate this table.</td></tr></tbody></table></div></section>
+<section id="registrations" class="hidden"><h1>Registrations</h1><p class="muted">Live registrations and payment verification.</p><div class="card table"><table><thead><tr><th>Name</th><th>Roll</th><th>Category</th><th>Amount</th><th>UTR</th><th>Status</th><th>Action</th></tr></thead><tbody id="regTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody></table></div></section>
 
 <section id="checkin" class="hidden"><h1>QR check-in</h1><p class="muted">Scan a guest's ticket QR or type the ticket ID manually.</p><div class="card"><button class="btn" onclick="alert('Camera scanning will be connected with the real ticket QR backend.')">Start camera scan</button><label>Ticket ID</label><input id="ticket" placeholder="SMVDU-FR26-0001"><button class="btn" style="margin-top:12px" onclick="manualCheck()">Check in</button><p id="checkMsg" class="muted"></p></div></section>
 
-<section id="expenses" class="hidden"><h1>Expenses</h1><p class="muted">Track what the event costs.</p><div class="card"><label>Expense name</label><input placeholder="e.g. Decorations"><label>Category</label><select><option>Other</option><option>Food</option><option>Decoration</option><option>Music</option><option>Venue</option></select><label>Amount (₹)</label><input type="number" placeholder="0"><label>Date</label><input type="date"><label>Notes</label><textarea rows="3"></textarea><button class="btn" style="margin-top:14px" onclick="alert('Expense will be saved after backend connection.')">Add expense</button></div></section>
+<section id="expenses" class="hidden"><h1>Expenses</h1><p class="muted">Track event spending.</p><div class="cards"><div class="card"><label>Expense name</label><input id="expenseName" placeholder="e.g. Decorations"><label>Category</label><select id="expenseCategory"><option>Other</option><option>Food</option><option>Decoration</option><option>Music</option><option>Venue</option></select><label>Amount (₹)</label><input id="expenseAmount" type="number" min="0" placeholder="0"><label>Date</label><input id="expenseDate" type="date"><label>Notes</label><textarea id="expenseNotes" rows="3"></textarea><button class="btn" onclick="addExpense()">Add expense</button><p id="expenseMsg" class="muted"></p></div><div class="card"><h2>Recent expenses</h2><div id="expenseList" class="muted">Loading...</div></div></div></section>
 
-<section id="fees" class="hidden"><h1>Fees & event details</h1><p class="muted">These values will appear on the public registration page.</p><div class="cards"><div class="card"><h2>Registration fee</h2><label>Senior fee (₹)</label><input placeholder="Not announced"><label>Junior fee (₹)</label><input placeholder="Not announced"><button class="btn" style="margin-top:15px">Save fees</button></div><div class="card"><h2>Event details</h2><label>Date</label><input placeholder="Coming Soon"><label>Time</label><input placeholder="Coming Soon"><label>Venue</label><input placeholder="Coming Soon"><label>Description</label><textarea rows="4">A night to welcome our new batch into the M&C family — music, lights, food and memories.</textarea><button class="btn" style="margin-top:15px">Save event details</button></div></div></section>
+<section id="fees" class="hidden"><h1>Fees & event details</h1><p class="muted">These values appear on the public registration page.</p>
+<div class="cards">
+<div class="card"><h2>Registration & payment</h2>
+<label>Senior fee (₹)</label><input id="seniorFee" type="number" min="0" placeholder="Not announced">
+<label>Junior fee (₹)</label><input id="juniorFee" type="number" min="0" placeholder="Not announced">
+<label>Receiver / payment name</label><input id="paymentName" placeholder="Freshers'26">
+<label>Receiver UPI ID</label><input id="upiId" inputmode="email" placeholder="example@upi">
+<label>QR code image URL</label><input id="qrUrl" type="url" placeholder="https://.../qr.png">
+<p class="muted" style="font-size:12px">Use a public QR image URL for now. Never store UPI PIN, OTP, card or bank-login details here.</p>
+<button class="btn" onclick="savePaymentSettings()">Save payment settings</button><p id="settingsMsg" class="muted"></p>
+</div>
+<div class="card"><h2>Event details</h2><label>Date</label><input id="eventDate" placeholder="Coming Soon"><label>Time</label><input id="eventTime" placeholder="Coming Soon"><label>Venue</label><input id="eventVenue" placeholder="Coming Soon"><label>Description</label><textarea id="eventDescription" rows="4">A night to welcome our new batch into the M&C family — music, lights, food and memories.</textarea><button class="btn" onclick="saveEventDetails()">Save event details</button><p id="eventMsg" class="muted"></p></div>
+</div>
+</section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://sydxhbamuobtimsqnzyu.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_CkwLvVJdxPGbi5YjR9B24Q_7dMyN-To';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+let currentProfile=null;
 
 (async function protect(){
  const {data:{session}}=await supabaseClient.auth.getSession();
  if(!session){location.href='organizer.html';return}
  const {data:profile,error}=await supabaseClient.from('profiles').select('email,role,approved,full_name').eq('id',session.user.id).single();
  if(error||!profile||!profile.approved){await supabaseClient.auth.signOut();location.href='organizer.html';return}
- window.currentProfile=profile;
+ currentProfile=profile;
+ await Promise.all([loadSettings(),loadRegistrations(),loadExpenses()]);
 })();
 
-async function show(id,btn){
+function show(id,btn){
  document.querySelectorAll('main section').forEach(x=>x.classList.add('hidden'));
  document.getElementById(id).classList.remove('hidden');
  document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
  btn.classList.add('active');
+ if(id==='registrations')loadRegistrations();
+ if(id==='expenses')loadExpenses();
+ if(id==='fees')loadSettings();
 }
-async function logout(){await supabaseClient.auth.signOut();sessionStorage.removeItem('fr26_auth');location.href='organizer.html'}
-function manualCheck(){let t=document.getElementById('ticket').value.trim();document.getElementById('checkMsg').textContent=t?'Ticket lookup will be validated by the secure backend: '+t:'Enter a ticket ID.'}
+async function logout(){await supabaseClient.auth.signOut();location.href='organizer.html'}
+
+async function loadSettings(){
+ const {data}=await supabaseClient.from('event_settings').select('*').eq('id',1).maybeSingle();
+ if(!data)return;
+ const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??''};
+ set('seniorFee',data.senior_fee);set('juniorFee',data.junior_fee);set('paymentName',data.payment_name);
+ set('upiId',data.upi_id);set('qrUrl',data.qr_url);set('eventDate',data.event_date);set('eventTime',data.event_time);
+ set('eventVenue',data.venue);set('eventDescription',data.description);
+}
+
+async function savePaymentSettings(){
+ const msg=document.getElementById('settingsMsg');
+ const payload={senior_fee:Number(document.getElementById('seniorFee').value)||null,junior_fee:Number(document.getElementById('juniorFee').value)||null,payment_name:document.getElementById('paymentName').value.trim()||null,upi_id:document.getElementById('upiId').value.trim()||null,qr_url:document.getElementById('qrUrl').value.trim()||null};
+ const {error}=await supabaseClient.from('event_settings').update(payload).eq('id',1);
+ msg.textContent=error?'Could not save payment settings. Check that the event_settings columns exist.':'Payment settings saved.';
+}
+
+async function saveEventDetails(){
+ const msg=document.getElementById('eventMsg');
+ const payload={event_date:document.getElementById('eventDate').value.trim()||null,event_time:document.getElementById('eventTime').value.trim()||null,venue:document.getElementById('eventVenue').value.trim()||null,description:document.getElementById('eventDescription').value.trim()||null};
+ const {error}=await supabaseClient.from('event_settings').update(payload).eq('id',1);
+ msg.textContent=error?'Could not save event details.':'Event details saved.';
+}
+
+async function loadRegistrations(){
+ const body=document.getElementById('regTable');
+ if(!body)return;
+ const {data,error}=await supabaseClient.from('registrations').select('id,name,roll_number,category,amount,utr,payment_status,ticket_id,ticket_status').order('created_at',{ascending:false}).limit(100);
+ if(error){body.innerHTML='<tr><td colspan="7" class="empty">Could not load registrations.</td></tr>';return}
+ if(!data?.length){body.innerHTML='<tr><td colspan="7" class="empty">No registrations yet.</td></tr>';return}
+ body.innerHTML=data.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.roll_number)}</td><td>${esc(r.category)}</td><td>₹${Number(r.amount||0).toLocaleString('en-IN')}</td><td>${esc(r.utr||'—')}</td><td>${esc(r.payment_status||'pending')}</td><td>${r.payment_status==='verified'?'<span class="badge">Verified</span>':`<button class="btn" onclick="verifyPayment('${r.id}')">Verify</button> <button class="btn" onclick="rejectPayment('${r.id}')">Reject</button>`}</td></tr>`).join('');
+ updateOverview(data);
+}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+async function verifyPayment(id){
+ const {error}=await supabaseClient.from('registrations').update({payment_status:'verified',ticket_status:'issued'}).eq('id',id);
+ if(error){alert('Verification failed.');return}
+ await loadRegistrations();
+}
+async function rejectPayment(id){
+ const {error}=await supabaseClient.from('registrations').update({payment_status:'rejected'}).eq('id',id);
+ if(error){alert('Could not reject payment.');return}
+ await loadRegistrations();
+}
+function updateOverview(rows){
+ const n=rows.length, senior=rows.filter(r=>String(r.category).toLowerCase()==='senior').length,junior=n-senior,pending=rows.filter(r=>String(r.payment_status).toLowerCase()!=='verified').length,collected=rows.filter(r=>String(r.payment_status).toLowerCase()==='verified').reduce((s,r)=>s+Number(r.amount||0),0);
+ const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+ set('regCount',n);set('seniorCount',senior);set('juniorCount',junior);set('pending',pending);set('collected','₹'+collected.toLocaleString('en-IN'));
+}
+async function addExpense(){
+ const msg=document.getElementById('expenseMsg');
+ const payload={expense:document.getElementById('expenseName').value.trim(),category:document.getElementById('expenseCategory').value,amount:Number(document.getElementById('expenseAmount').value)||0,date:document.getElementById('expenseDate').value||new Date().toISOString().slice(0,10),notes:document.getElementById('expenseNotes').value.trim()};
+ if(!payload.expense||!payload.amount){msg.textContent='Enter expense name and amount.';return}
+ const {error}=await supabaseClient.from('expenses').insert(payload);
+ msg.textContent=error?'Could not save expense.':'Expense saved.';
+ if(!error){document.getElementById('expenseName').value='';document.getElementById('expenseAmount').value='';document.getElementById('expenseNotes').value='';await loadExpenses();}
+}
+async function loadExpenses(){
+ const list=document.getElementById('expenseList');if(!list)return;
+ const {data,error}=await supabaseClient.from('expenses').select('date,expense,category,amount,notes').order('date',{ascending:false}).limit(20);
+ if(error){list.textContent='Could not load expenses.';return}
+ list.innerHTML=data?.length?data.map(x=>`<div class="row"><span>${esc(x.expense)}<small style="display:block;color:var(--muted)">${esc(x.category)} • ${esc(x.date)}</small></span><b>₹${Number(x.amount||0).toLocaleString('en-IN')}</b></div>`).join(''):'No expenses yet.';
+}
 </script>
 </body></html>
