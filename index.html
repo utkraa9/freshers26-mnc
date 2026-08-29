@@ -32,7 +32,6 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 </head>
 <body>
 <nav class="nav"><div class="navin"><a class="brand" href="#"><img class="brand-logo" src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU logo"><span>FRESHERS'26<small>Mathematics & Computing • SMVDU</small></span></a><div class="links"><a href="#contribute">Contribute</a><a href="#ticket">Ticket</a><a href="#about">About</a></div></div></nav>
-
 <main>
 <div class="wrap hero">
   <div>
@@ -43,7 +42,6 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
   </div>
   <div class="art"><div class="math">∑ ∫ π<br>01 10<br>f(x)</div><div><div class="big">MATHEMATICS & COMPUTING</div><small>SMVDU • Freshers'26</small></div></div>
 </div>
-
 <section><div class="wrap"><div class="card" style="display:flex;align-items:center;gap:16px;border-left:5px solid var(--orange)"><img src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU logo" style="width:72px;height:60px;object-fit:contain"><div><b>SMVDU • Mathematics & Computing</b><div class="sub" style="margin:3px 0 0">Freshers'26 contribution & entry portal</div></div></div></div></section>
 <section id="contribute"><div class="wrap">
 <h2 class="section-title">Contribution</h2><p class="sub">Choose your category, then fill in your details and pay securely online.</p>
@@ -53,7 +51,6 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 <div class="card"><h3>Payment</h3><div class="amount">Secure online payment</div><p class="sub">Pay instantly by card, UPI, or netbanking. Your ticket is issued automatically the moment payment succeeds.</p></div>
 </div>
 </div></section>
-
 <section id="ticket"><div class="wrap"><h2 class="section-title">Registration & Ticket</h2><p class="sub">Fill in your details, then pay online. Your ticket is issued automatically — no manual verification needed.</p>
 <div class="card form">
 <div class="row"><div><label>Name</label><input id="name" placeholder="Your full name"></div><div><label>Roll Number</label><input id="roll" placeholder="e.g. 25bcm050"></div></div>
@@ -64,7 +61,6 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 <div class="card" style="margin-top:16px"><h3>Check ticket status</h3><div class="row"><div><label>Ticket ID</label><input id="lookupTicket" placeholder="FR26-..."></div><div class="btns" style="align-items:end"><button class="btn primary" onclick="lookupTicket()">Check status</button></div></div><p id="lookupMsg" class="sub"></p><div id="lookupQr" style="margin-top:12px"></div></div>
 <div id="ticketCard" class="ticket"><div class="ticket-top"><b>FRESHERS'26</b><div style="opacity:.8">MATHEMATICS & COMPUTING • SMVDU</div></div><div class="ticket-body"><div><div class="ticket-id" id="tid"></div><h2 id="tn"></h2><p id="td" class="sub"></p><b id="tstatus">PAYMENT PENDING</b></div></div></div>
 </div></div></section>
-
 <section id="about"><div class="wrap"><h2 class="section-title">About Freshers'26</h2><p class="sub">A contribution and entry portal for the Mathematics & Computing Freshers'26 event at Shri Mata Vaishno Devi University.</p><div class="grid"><div class="card"><h3>📅 Date</h3><p class="soon">Coming Soon</p></div><div class="card"><h3>📍 Venue</h3><p class="soon">To Be Announced</p></div><div class="card"><h3>🎟️ Entry</h3><p>Verified contributors receive a unique event ticket.</p></div></div></div></section>
 </main>
 <footer><div class="wrap">Freshers'26 • Mathematics & Computing • Shri Mata Vaishno Devi University</div></footer>
@@ -73,7 +69,6 @@ const SUPABASE_URL='https://sydxhbamuobtimsqnzyu.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZHhoYmFtdW9idGltc3Fuenl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5MjA1NTgsImV4cCI6MjEwMzQ5NjU1OH0._StuiHuoBYixysRqRW5EUVLO-4gqSlgUJ38xPIkR-vw';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 let settings={};
-
 async function loadSettings(){
   const {data,error}=await supabaseClient.from('event_settings').select('*').eq('id',1).single();
   if(error||!data){console.error('Load settings error:',error);return;}
@@ -89,21 +84,16 @@ function chooseCategory(category){
   updateAmount();
   document.getElementById('ticket').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
 function updateAmount(){
   const cat=document.getElementById('cat').value;
   const amount=cat==='senior'?settings.senior_fee:settings.junior_fee;
-
   document.getElementById('amount').value=amount!=null?'₹'+Number(amount).toLocaleString('en-IN'):'';
-
   document.getElementById('seniorCard').classList.toggle('selected',cat==='senior');
   document.getElementById('juniorCard').classList.toggle('selected',cat==='junior');
-
   const payBtn=document.getElementById('payBtn');
   payBtn.disabled=(amount==null);
   payBtn.style.opacity=(amount==null)?'.5':'';
 }
-
 async function startPayment(){
   const name=document.getElementById('name').value.trim();
   const roll=document.getElementById('roll').value.trim();
@@ -113,14 +103,16 @@ async function startPayment(){
   const amount=category==='senior'?settings.senior_fee:settings.junior_fee;
   const msg=document.getElementById('msg');
   const payBtn=document.getElementById('payBtn');
-
   if(!name||!roll||!email){msg.textContent='Please enter name, roll number and email.';return;}
   if(amount==null){msg.textContent='The contribution amount has not been announced yet.';return;}
-
   payBtn.disabled=true;
   msg.textContent='Creating your registration...';
 
-  const {data:reg,error:insertErr}=await supabaseClient.from('registrations').insert({
+  // Generate the registration ID in the browser so the anonymous INSERT
+  // does not need SELECT/RETURNING permission under RLS.
+  const registrationId=crypto.randomUUID();
+  const {error:insertErr}=await supabaseClient.from('registrations').insert({
+    id:registrationId,
     name,
     roll_number:roll,
     email,
@@ -128,17 +120,16 @@ async function startPayment(){
     category,
     amount,
     payment_status:'pending'
-  }).select('id').single();
+  });
+  const reg={id:registrationId};
 
-  if(insertErr||!reg){
+  if(insertErr){
     console.error('Registration insert error:',insertErr);
     msg.textContent='Unable to start registration: '+(insertErr?.message||'unknown error');
     payBtn.disabled=false;
     return;
   }
-
   msg.textContent='Opening secure payment...';
-
   let orderRes;
   try{
     const resp=await fetch('/api/create-order',{
@@ -154,7 +145,6 @@ async function startPayment(){
     payBtn.disabled=false;
     return;
   }
-
   const rzp=new Razorpay({
     key:orderRes.key_id,
     amount:orderRes.amount,
@@ -178,7 +168,6 @@ async function startPayment(){
         });
         const verifyData=await verifyResp.json();
         if(!verifyResp.ok) throw new Error(verifyData.error||'Verification failed');
-
         document.getElementById('tid').textContent=verifyData.ticket_id;
         document.getElementById('tn').textContent=name;
         document.getElementById('td').textContent=roll+' • '+(category==='senior'?'Senior':'Junior');
@@ -199,18 +188,14 @@ async function startPayment(){
       }
     }
   });
-
   rzp.on('payment.failed',function(response){
     console.error('Razorpay payment failed:',response.error);
     msg.textContent='Payment failed: '+(response.error?.description||'please try again.');
     payBtn.disabled=false;
   });
-
   rzp.open();
 }
 loadSettings();
-
-
 async function lookupTicket(){
   const id=document.getElementById('lookupTicket').value.trim();
   const msg=document.getElementById('lookupMsg'), box=document.getElementById('lookupQr');
