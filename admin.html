@@ -4,182 +4,60 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Organizer Dashboard | Freshers'26</title>
 <style>
-:root{--bg:#080b15;--panel:#111522;--panel2:#151a29;--line:#252b3b;--text:#f5f6fa;--muted:#9299aa;--accent:#f6a817;--green:#54d58a;--pink:#ed6ad6}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}.top{position:sticky;top:0;z-index:10;background:#080b15ee;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}.topin{max-width:1150px;margin:auto;padding:15px 20px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;gap:11px;align-items:center}.logo{width:43px;height:38px;object-fit:contain}.brand b{font-size:16px}.brand small{display:block;color:var(--muted);margin-top:2px}.sign{border:1px solid var(--line);background:transparent;color:#fff;padding:10px 14px;border-radius:12px;font-weight:800}.nav{max-width:1150px;margin:auto;padding:12px 20px;display:flex;gap:7px;overflow:auto}.nav button{white-space:nowrap;border:0;background:transparent;color:#9ea5b5;padding:10px 14px;border-radius:999px;font:inherit}.nav button.active{background:#202538;color:#fff}.wrap{max-width:1150px;margin:auto;padding:38px 20px 70px}h1{font-size:40px;margin:0 0 5px}h2{margin:0 0 8px}.muted{color:var(--muted);line-height:1.55}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px}.stat .label{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:1px}.stat .num{font-size:31px;font-weight:900;margin-top:12px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px}.row{display:flex;justify-content:space-between;gap:15px;align-items:center;border-bottom:1px solid var(--line);padding:15px 0}.row:last-child{border-bottom:0}.badge{display:inline-block;padding:7px 10px;border-radius:999px;background:#193f2e;color:#7ee2a9;font-size:12px;font-weight:850}.warn{background:#3a301b;color:#ffc55a}.danger{background:#3b1d29;color:#ff9db5}input,select,textarea{width:100%;padding:13px;border-radius:12px;border:1px solid #303649;background:#0c101b;color:#fff;font:inherit;margin-top:7px}label{display:block;font-size:13px;font-weight:800;margin-top:13px}.btn{padding:12px 15px;border:0;border-radius:12px;background:var(--accent);font-weight:900}.hidden{display:none}.table{overflow:auto}.table table{width:100%;border-collapse:collapse;min-width:650px}.table th,.table td{text-align:left;padding:13px;border-bottom:1px solid var(--line)}.table th{color:var(--muted);font-size:12px;text-transform:uppercase}.empty{padding:30px 0;color:var(--muted)}@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}h1{font-size:34px}}@media(max-width:480px){.grid{grid-template-columns:1fr 1fr}.stat{padding:17px}.stat .num{font-size:25px}}
+:root{--bg:#080b15;--panel:#111522;--line:#252b3b;--text:#f5f6fa;--muted:#9299aa;--accent:#f6a817;--green:#54d58a;--danger:#ff9db5}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}.top{position:sticky;top:0;z-index:10;background:#080b15ee;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}.topin{max-width:1150px;margin:auto;padding:15px 20px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;gap:11px;align-items:center}.logo{width:43px;height:38px;object-fit:contain}.brand b{font-size:16px}.brand small{display:block;color:var(--muted);margin-top:2px}.sign{border:1px solid var(--line);background:transparent;color:#fff;padding:10px 14px;border-radius:12px;font-weight:800}.nav{max-width:1150px;margin:auto;padding:12px 20px;display:flex;gap:7px;overflow:auto}.nav button{white-space:nowrap;border:0;background:transparent;color:#9ea5b5;padding:10px 14px;border-radius:999px;font:inherit;cursor:pointer}.nav button.active{background:#202538;color:#fff}.nav button.authority{background:#3a301b;color:#ffc55a}.wrap{max-width:1150px;margin:auto;padding:38px 20px 70px}h1{font-size:40px;margin:0 0 5px}h2{margin:0 0 8px}.muted{color:var(--muted);line-height:1.55}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px}.stat .label{color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:1px}.stat .num{font-size:31px;font-weight:900;margin-top:12px}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:22px}.row{display:flex;justify-content:space-between;gap:15px;align-items:center;border-bottom:1px solid var(--line);padding:15px 0}.row:last-child{border-bottom:0}.badge{display:inline-block;padding:7px 10px;border-radius:999px;background:#193f2e;color:#7ee2a9;font-size:12px;font-weight:850}.warn{background:#3a301b;color:#ffc55a}.danger{background:#3b1d29;color:var(--danger)}input,select,textarea{width:100%;padding:13px;border-radius:12px;border:1px solid #303649;background:#0c101b;color:#fff;font:inherit;margin-top:7px}label{display:block;font-size:13px;font-weight:800;margin-top:13px}.btn{padding:12px 15px;border:0;border-radius:12px;background:var(--accent);font-weight:900;cursor:pointer}.btn.danger{background:#3b1d29;color:var(--danger)}.btn:disabled{opacity:.55;cursor:not-allowed}.hidden{display:none}.table{overflow:auto}.table table{width:100%;border-collapse:collapse;min-width:650px}.table th,.table td{text-align:left;padding:13px;border-bottom:1px solid var(--line)}.table th{color:var(--muted);font-size:12px;text-transform:uppercase}.empty{padding:30px 0;color:var(--muted)}.status{display:inline-block;padding:7px 10px;border-radius:999px;background:#3a301b;color:#ffc55a;font-size:12px;font-weight:850}.status.ok{background:#193f2e;color:#7ee2a9}.actions{display:flex;gap:8px;flex-wrap:wrap}.authority-note{border:1px solid #5a4a1f;background:#211c0d;border-radius:16px;padding:14px 16px;margin:18px 0;color:#e9d89b}.small{font-size:12px}@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}h1{font-size:34px}}@media(max-width:480px){.grid{grid-template-columns:1fr 1fr}.stat{padding:17px}.stat .num{font-size:25px}}
 </style>
 </head>
 <body>
 <header class="top"><div class="topin"><div class="brand"><img class="logo" src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU"><div><b>FRESHERS'26 • Organizer</b><small>SMVDU • Mathematics & Computing</small></div></div><button class="sign" onclick="logout()">↪ Sign out</button></div>
-<nav class="nav">
-<button class="active" onclick="show('overview',this)">Overview</button><button onclick="show('registrations',this)">Registrations</button><button onclick="show('checkin',this)">Check-in</button><button onclick="show('expenses',this)">Expenses</button><button onclick="show('fees',this)">Fees</button>
-</nav></header>
-
+<nav class="nav" id="nav"><button class="active" onclick="show('overview',this)">Overview</button><button onclick="show('registrations',this)">Registrations</button><button onclick="show('checkin',this)">Check-in</button><button onclick="show('expenses',this)">Expenses</button><button onclick="show('fees',this)">Fees</button><button id="approvalsNav" class="authority hidden" onclick="show('approvals',this)">Organizer approvals</button></nav></header>
 <main class="wrap">
-<section id="overview">
-<h1>Overview</h1><p class="muted">Live organizer dashboard for Freshers'26. Connect the shared backend later for real-time data from all students.</p>
-<div class="grid"><div class="stat"><div class="label">Registrations</div><div class="num" id="regCount">0</div></div><div class="stat"><div class="label">Checked in</div><div class="num" id="checkCount">0</div></div><div class="stat"><div class="label">Collected</div><div class="num" id="collected">₹0</div></div><div class="stat"><div class="label">Spent</div><div class="num" id="spent">₹0</div></div></div>
-<div class="cards"><div class="card"><h2>Collection summary</h2><div class="row"><span>Seniors</span><b id="seniorCount">0</b></div><div class="row"><span>Juniors</span><b id="juniorCount">0</b></div><div class="row"><span>Payments pending</span><b id="pending">0</b></div><div class="row"><span>Balance</span><b id="balance">₹0</b></div></div><div class="card"><h2>Event details</h2><div class="row"><span>Date</span><b>Coming Soon</b></div><div class="row"><span>Time</span><b>Coming Soon</b></div><div class="row"><span>Venue</span><b>To Be Announced</b></div><p class="muted">Update these later from the Fees section.</p></div></div>
-</section>
-
-<section id="registrations" class="hidden"><h1>Registrations</h1><p class="muted">Live registrations. Payments are verified automatically by the Razorpay webhook — the "Force verify" button is a support fallback only, for the rare case a payment succeeded but the webhook didn't reach the server.</p><div class="card table"><table><thead><tr><th>Name</th><th>Roll</th><th>Category</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="regTable"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody></table></div></section>
-
-<section id="checkin" class="hidden"><h1>Check-in</h1><p class="muted">Scan a guest ticket QR or enter the ticket ID manually. Each ticket can be checked in only once.</p>
-<div class="cards"><div class="card"><h2>QR scanner</h2><div id="qr-reader" style="width:100%;max-width:520px"></div><button class="btn" onclick="startScanner()">Start camera scan</button><p id="scanMsg" class="muted"></p></div>
-<div class="card"><h2>Manual check-in</h2><label>Ticket ID</label><input id="checkTicket" placeholder="FR26-..."><button class="btn" onclick="checkIn(document.getElementById('checkTicket').value)" style="margin-top:12px">Check in</button><p id="checkMsg" class="muted"></p></div></div>
-</section>
-
+<section id="overview"><h1>Overview</h1><p class="muted">Live organizer dashboard for Freshers'26.</p><div class="grid"><div class="stat"><div class="label">Registrations</div><div class="num" id="regCount">0</div></div><div class="stat"><div class="label">Checked in</div><div class="num" id="checkCount">0</div></div><div class="stat"><div class="label">Collected</div><div class="num" id="collected">₹0</div></div><div class="stat"><div class="label">Spent</div><div class="num" id="spent">₹0</div></div></div><div class="cards"><div class="card"><h2>Collection summary</h2><div class="row"><span>Seniors</span><b id="seniorCount">0</b></div><div class="row"><span>Juniors</span><b id="juniorCount">0</b></div><div class="row"><span>Payments pending</span><b id="pending">0</b></div><div class="row"><span>Balance</span><b id="balance">₹0</b></div></div><div class="card"><h2>Event details</h2><div class="row"><span>Date</span><b>Coming Soon</b></div><div class="row"><span>Time</span><b>Coming Soon</b></div><div class="row"><span>Venue</span><b>To Be Announced</b></div><p class="muted">Update these later from the Fees section.</p></div></div></section>
+<section id="registrations" class="hidden"><h1>Registrations</h1><p class="muted">Live registrations. Payments are verified automatically by the Razorpay webhook.</p><div class="card table"><table><thead><tr><th>Name</th><th>Roll</th><th>Category</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="regTable"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody></table></div></section>
+<section id="checkin" class="hidden"><h1>Check-in</h1><p class="muted">Scan a guest ticket QR or enter the ticket ID manually. Each ticket can be checked in only once.</p><div class="cards"><div class="card"><h2>QR scanner</h2><div id="qr-reader" style="width:100%;max-width:520px"></div><button class="btn" onclick="startScanner()">Start camera scan</button><p id="scanMsg" class="muted"></p></div><div class="card"><h2>Manual check-in</h2><label>Ticket ID</label><input id="checkTicket" placeholder="FR26-..."><button class="btn" onclick="checkIn(document.getElementById('checkTicket').value)" style="margin-top:12px">Check in</button><p id="checkMsg" class="muted"></p></div></div></section>
 <section id="expenses" class="hidden"><h1>Expenses</h1><p class="muted">Track event spending.</p><div class="cards"><div class="card"><label>Expense name</label><input id="expenseName" placeholder="e.g. Decorations"><label>Category</label><select id="expenseCategory"><option>Other</option><option>Food</option><option>Decoration</option><option>Music</option><option>Venue</option></select><label>Amount (₹)</label><input id="expenseAmount" type="number" min="0" placeholder="0"><label>Date</label><input id="expenseDate" type="date"><label>Notes</label><textarea id="expenseNotes" rows="3"></textarea><button class="btn" onclick="addExpense()">Add expense</button><p id="expenseMsg" class="muted"></p></div><div class="card"><h2>Recent expenses</h2><div id="expenseList" class="muted">Loading...</div></div></div></section>
-
-<section id="fees" class="hidden"><h1>Fees & event details</h1><p class="muted">These values appear on the public registration page and are used by the payment gateway to charge the correct amount.</p>
-<div class="cards">
-<div class="card"><h2>Registration fees</h2>
-<label>Senior fee (₹)</label><input id="seniorFee" type="number" min="0" placeholder="Not announced">
-<label>Junior fee (₹)</label><input id="juniorFee" type="number" min="0" placeholder="Not announced">
-<label>Receiver / payment name</label><input id="paymentName" placeholder="Freshers'26">
-<p class="muted" style="font-size:12px">Payments are collected automatically through Razorpay. There's no UPI ID or QR code to manage here anymore.</p>
-<button class="btn" onclick="savePaymentSettings()">Save fees</button><p id="settingsMsg" class="muted"></p>
-</div>
-<div class="card"><h2>Event details</h2><label>Date</label><input id="eventDate" placeholder="Coming Soon"><label>Time</label><input id="eventTime" placeholder="Coming Soon"><label>Venue</label><input id="eventVenue" placeholder="Coming Soon"><label>Description</label><textarea id="eventDescription" rows="4">A night to welcome our new batch into the M&C family — music, lights, food and memories.</textarea><button class="btn" onclick="saveEventDetails()">Save event details</button><p id="eventMsg" class="muted"></p></div>
-</div>
-</section>
+<section id="fees" class="hidden"><h1>Fees & event details</h1><p class="muted">These values appear on the public registration page and are used by the payment gateway.</p><div class="cards"><div class="card"><h2>Registration fees</h2><label>Senior fee (₹)</label><input id="seniorFee" type="number" min="0" placeholder="Not announced"><label>Junior fee (₹)</label><input id="juniorFee" type="number" min="0" placeholder="Not announced"><label>Receiver / payment name</label><input id="paymentName" placeholder="Freshers'26"><p class="muted small">Payments are collected automatically through Razorpay.</p><button class="btn" onclick="savePaymentSettings()">Save fees</button><p id="settingsMsg" class="muted"></p></div><div class="card"><h2>Event details</h2><label>Date</label><input id="eventDate" placeholder="Coming Soon"><label>Time</label><input id="eventTime" placeholder="Coming Soon"><label>Venue</label><input id="eventVenue" placeholder="Coming Soon"><label>Description</label><textarea id="eventDescription" rows="4">A night to welcome our new batch into the M&C family — music, lights, food and memories.</textarea><button class="btn" onclick="saveEventDetails()">Save event details</button><p id="eventMsg" class="muted"></p></div></div></section>
+<section id="approvals" class="hidden"><h1>Organizer approvals</h1><p class="muted">Only the main authority can approve or reject organizer accounts.</p><div class="authority-note"><b>Main authority:</b> pal.utkarsh440@gmail.com<br><span class="small">This account controls organizer approval. Other organizers cannot access this section.</span></div><div class="card table"><table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Action</th></tr></thead><tbody id="organizerTable"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody></table></div></section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://sydxhbamuobtimsqnzyu.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_CkwLvVJdxPGbi5YjR9B24Q_7dMyN-To';
+const MAIN_AUTHORITY_EMAIL='pal.utkarsh440@gmail.com';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-let currentProfile=null;
-let totalCollected=0, totalSpent=0;
-
+let currentProfile=null,totalCollected=0,totalSpent=0,isMainAuthority=false;
 (async function protect(){
  const {data:{session}}=await supabaseClient.auth.getSession();
  if(!session){location.href='organizer.html';return}
- const {data:profile,error}=await supabaseClient.from('profiles').select('email,role,approved,full_name').eq('id',session.user.id).single();
- if(error||!profile||!profile.approved){await supabaseClient.auth.signOut();location.href='organizer.html';return}
- currentProfile=profile;
+ const {data:profile,error}=await supabaseClient.from('profiles').select('id,email,role,approved,full_name').eq('id',session.user.id).single();
+ if(error||!profile||profile.approved!==true||(profile.role!=='organizer'&&profile.role!=='admin')){await supabaseClient.auth.signOut();location.href='organizer.html';return}
+ currentProfile=profile; isMainAuthority=String(profile.email||'').toLowerCase()===MAIN_AUTHORITY_EMAIL;
+ if(isMainAuthority){document.getElementById('approvalsNav').classList.remove('hidden');}
  await Promise.all([loadSettings(),loadRegistrations(),loadExpenses()]);
+ if(isMainAuthority) loadOrganizerRequests();
 })();
-
 function show(id,btn){
- document.querySelectorAll('main section').forEach(x=>x.classList.add('hidden'));
- document.getElementById(id).classList.remove('hidden');
- document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
- btn.classList.add('active');
- if(id==='registrations')loadRegistrations();
- if(id==='expenses')loadExpenses();
- if(id==='fees')loadSettings();
+ if(id==='approvals'&&!isMainAuthority){alert('Only the main authority can manage organizer approvals.');return}
+ document.querySelectorAll('main section').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));btn.classList.add('active');
+ if(id==='registrations')loadRegistrations(); if(id==='expenses')loadExpenses(); if(id==='fees')loadSettings(); if(id==='approvals')loadOrganizerRequests();
 }
 async function logout(){await supabaseClient.auth.signOut();location.href='organizer.html'}
-
-async function loadSettings(){
- const {data}=await supabaseClient.from('event_settings').select('*').eq('id',1).maybeSingle();
- if(!data)return;
- const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??''};
- set('seniorFee',data.senior_fee);set('juniorFee',data.junior_fee);set('paymentName',data.payment_name);
- set('eventDate',data.event_date);set('eventTime',data.event_time);
- set('eventVenue',data.venue);set('eventDescription',data.description);
-}
-
-async function savePaymentSettings(){
-  const msg=document.getElementById('settingsMsg');
-  msg.textContent='Saving...';
-
-  const payload={
-    senior_fee:Number(document.getElementById('seniorFee').value)||null,
-    junior_fee:Number(document.getElementById('juniorFee').value)||null,
-    payment_name:document.getElementById('paymentName').value.trim()||null
-  };
-  const {error}=await supabaseClient.from('event_settings').update(payload).eq('id',1);
-  if(error){console.error('Save settings error:',error);msg.textContent='Could not save fees: '+error.message;return;}
-  msg.textContent='Fees saved successfully.';
-}
-async function saveEventDetails(){
- const msg=document.getElementById('eventMsg');
- const payload={event_date:document.getElementById('eventDate').value.trim()||null,event_time:document.getElementById('eventTime').value.trim()||null,venue:document.getElementById('eventVenue').value.trim()||null,description:document.getElementById('eventDescription').value.trim()||null};
- const {error}=await supabaseClient.from('event_settings').update(payload).eq('id',1);
- msg.textContent=error?'Could not save event details.':'Event details saved.';
-}
-
-async function loadRegistrations(){
- const body=document.getElementById('regTable');
- if(!body)return;
- const {data,error}=await supabaseClient.from('registrations').select('id,name,roll_number,category,amount,payment_status,ticket_id,ticket_status,checked_in_at').order('created_at',{ascending:false}).limit(100);
- if(error){console.error('Load registrations error:',error);body.innerHTML='<tr><td colspan="6" class="empty">Could not load registrations.</td></tr>';return}
- if(!data?.length){body.innerHTML='<tr><td colspan="6" class="empty">No registrations yet.</td></tr>';return}
- body.innerHTML=data.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.roll_number)}</td><td>${esc(r.category)}</td><td>₹${Number(r.amount||0).toLocaleString('en-IN')}</td><td>${esc(r.payment_status||'pending')}</td><td>${r.payment_status==='verified'?'<span class="badge">Verified</span>':`<button class="btn" onclick="verifyPayment('${r.id}')">Force verify</button>`}</td></tr>`).join('');
- updateOverview(data);
-}
-function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
-async function verifyPayment(id){
-  if(!confirm('This bypasses Razorpay verification and marks the registration as paid directly. Only use this if you have confirmed the payment succeeded in your Razorpay dashboard. Continue?'))return;
-  const ticket='FR26-'+crypto.randomUUID().replaceAll('-','').slice(0,12).toUpperCase();
-  const {error}=await supabaseClient.from('registrations').update({
-    payment_status:'verified',ticket_status:'issued',ticket_id:ticket,
-    ticket_qr_token:ticket,verified_at:new Date().toISOString(),
-    verified_by:currentProfile?.id||null
-  }).eq('id',id);
-  if(error){console.error('Verify payment error:',error);alert('Verification failed: '+error.message);return}
-  await loadRegistrations();
-}
-function updateOverview(rows){
- const n=rows.length, senior=rows.filter(r=>String(r.category).toLowerCase()==='senior').length,junior=n-senior,pending=rows.filter(r=>String(r.payment_status).toLowerCase()!=='verified').length,collected=rows.filter(r=>String(r.payment_status).toLowerCase()==='verified').reduce((s,r)=>s+Number(r.amount||0),0);
- const checkedIn=rows.filter(r=>r.checked_in_at).length;
- totalCollected=collected;
- const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
- set('regCount',n);set('seniorCount',senior);set('juniorCount',junior);set('pending',pending);set('collected','₹'+collected.toLocaleString('en-IN'));set('checkCount',checkedIn);
- updateBalance();
-}
-function updateBalance(){
- const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
- set('spent','₹'+totalSpent.toLocaleString('en-IN'));
- set('balance','₹'+(totalCollected-totalSpent).toLocaleString('en-IN'));
-}
-async function addExpense(){
- const msg=document.getElementById('expenseMsg');
- const payload={expense:document.getElementById('expenseName').value.trim(),category:document.getElementById('expenseCategory').value,amount:Number(document.getElementById('expenseAmount').value)||0,date:document.getElementById('expenseDate').value||new Date().toISOString().slice(0,10),notes:document.getElementById('expenseNotes').value.trim()};
- if(!payload.expense||!payload.amount){msg.textContent='Enter expense name and amount.';return}
- const {error}=await supabaseClient.from('expenses').insert(payload);
- msg.textContent=error?'Could not save expense.':'Expense saved.';
- if(!error){document.getElementById('expenseName').value='';document.getElementById('expenseAmount').value='';document.getElementById('expenseNotes').value='';await loadExpenses();}
-}
-async function loadExpenses(){
- const list=document.getElementById('expenseList');if(!list)return;
- const {data,error}=await supabaseClient.from('expenses').select('date,expense,category,amount,notes').order('date',{ascending:false}).limit(20);
- if(error){console.error('Load expenses error:',error);list.textContent='Could not load expenses.';return}
- list.innerHTML=data?.length?data.map(x=>`<div class="row"><span>${esc(x.expense)}<small style="display:block;color:var(--muted)">${esc(x.category)} • ${esc(x.date)}</small></span><b>₹${Number(x.amount||0).toLocaleString('en-IN')}</b></div>`).join(''):'No expenses yet.';
- totalSpent=(data||[]).reduce((s,x)=>s+Number(x.amount||0),0);
- updateBalance();
-}
+async function loadSettings(){const {data}=await supabaseClient.from('event_settings').select('*').eq('id',1).maybeSingle();if(!data)return;const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??''};set('seniorFee',data.senior_fee);set('juniorFee',data.junior_fee);set('paymentName',data.payment_name);set('eventDate',data.event_date);set('eventTime',data.event_time);set('eventVenue',data.venue);set('eventDescription',data.description)}
+async function savePaymentSettings(){const msg=document.getElementById('settingsMsg');msg.textContent='Saving...';const payload={senior_fee:Number(document.getElementById('seniorFee').value)||null,junior_fee:Number(document.getElementById('juniorFee').value)||null,payment_name:document.getElementById('paymentName').value.trim()||null};const {error}=await supabaseClient.from('event_settings').update(payload).eq('id',1);msg.textContent=error?'Could not save fees: '+error.message:'Fees saved successfully.'}
+async function saveEventDetails(){const msg=document.getElementById('eventMsg');const payload={event_date:document.getElementById('eventDate').value.trim()||null,event_time:document.getElementById('eventTime').value.trim()||null,venue:document.getElementById('eventVenue').value.trim()||null,description:document.getElementById('eventDescription').value.trim()||null};const {error}=await supabaseClient.from('event_settings').update(payload).eq('id',1);msg.textContent=error?'Could not save event details.':'Event details saved.'}
+async function loadRegistrations(){const body=document.getElementById('regTable');if(!body)return;const {data,error}=await supabaseClient.from('registrations').select('id,name,roll_number,category,amount,payment_status,ticket_id,ticket_status,checked_in_at').order('created_at',{ascending:false}).limit(100);if(error){console.error(error);body.innerHTML='<tr><td colspan="6" class="empty">Could not load registrations.</td></tr>';return}if(!data?.length){body.innerHTML='<tr><td colspan="6" class="empty">No registrations yet.</td></tr>';return}body.innerHTML=data.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.roll_number)}</td><td>${esc(r.category)}</td><td>₹${Number(r.amount||0).toLocaleString('en-IN')}</td><td>${esc(r.payment_status||'pending')}</td><td>${r.payment_status==='verified'?'<span class="badge">Verified</span>':`<button class="btn" onclick="verifyPayment('${r.id}')">Force verify</button>`}</td></tr>`).join('');updateOverview(data)}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+async function verifyPayment(id){if(!confirm('Only use this after confirming the payment succeeded in Razorpay. Continue?'))return;const ticket='FR26-'+crypto.randomUUID().replaceAll('-','').slice(0,12).toUpperCase();const {error}=await supabaseClient.from('registrations').update({payment_status:'verified',ticket_status:'issued',ticket_id:ticket,ticket_qr_token:ticket,verified_at:new Date().toISOString(),verified_by:currentProfile?.id||null}).eq('id',id);if(error){alert('Verification failed: '+error.message);return}await loadRegistrations()}
+function updateOverview(rows){const n=rows.length,senior=rows.filter(r=>String(r.category).toLowerCase()==='senior').length,junior=n-senior,pending=rows.filter(r=>String(r.payment_status).toLowerCase()!=='verified').length,collected=rows.filter(r=>String(r.payment_status).toLowerCase()==='verified').reduce((s,r)=>s+Number(r.amount||0),0),checkedIn=rows.filter(r=>r.checked_in_at).length;totalCollected=collected;const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};set('regCount',n);set('seniorCount',senior);set('juniorCount',junior);set('pending',pending);set('collected','₹'+collected.toLocaleString('en-IN'));set('checkCount',checkedIn);updateBalance()}
+function updateBalance(){const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};set('spent','₹'+totalSpent.toLocaleString('en-IN'));set('balance','₹'+(totalCollected-totalSpent).toLocaleString('en-IN'))}
+async function addExpense(){const msg=document.getElementById('expenseMsg');const payload={expense:document.getElementById('expenseName').value.trim(),category:document.getElementById('expenseCategory').value,amount:Number(document.getElementById('expenseAmount').value)||0,date:document.getElementById('expenseDate').value||new Date().toISOString().slice(0,10),notes:document.getElementById('expenseNotes').value.trim()};if(!payload.expense||!payload.amount){msg.textContent='Enter expense name and amount.';return}const {error}=await supabaseClient.from('expenses').insert(payload);msg.textContent=error?'Could not save expense.':'Expense saved.';if(!error){document.getElementById('expenseName').value='';document.getElementById('expenseAmount').value='';document.getElementById('expenseNotes').value='';await loadExpenses()}}
+async function loadExpenses(){const list=document.getElementById('expenseList');if(!list)return;const {data,error}=await supabaseClient.from('expenses').select('date,expense,category,amount,notes').order('date',{ascending:false}).limit(20);if(error){list.textContent='Could not load expenses.';return}list.innerHTML=data?.length?data.map(x=>`<div class="row"><span>${esc(x.expense)}<small style="display:block;color:var(--muted)">${esc(x.category)} • ${esc(x.date)}</small></span><b>₹${Number(x.amount||0).toLocaleString('en-IN')}</b></div>`).join(''):'No expenses yet.';totalSpent=(data||[]).reduce((s,x)=>s+Number(x.amount||0),0);updateBalance()}
+async function loadOrganizerRequests(){if(!isMainAuthority)return;const body=document.getElementById('organizerTable');body.innerHTML='<tr><td colspan="4" class="empty">Loading...</td></tr>';const {data,error}=await supabaseClient.rpc('get_organizer_requests');if(error){body.innerHTML='<tr><td colspan="4" class="empty">Could not load organizer requests: '+esc(error.message)+'</td></tr>';return}if(!data?.length){body.innerHTML='<tr><td colspan="4" class="empty">No organizer accounts yet.</td></tr>';return}body.innerHTML=data.map(x=>`<tr><td>${esc(x.full_name||'—')}</td><td>${esc(x.email||'—')}</td><td><span class="status ${x.approved?'ok':''}">${x.approved?'Approved':'Pending'}</span></td><td>${x.approved?'<button class="btn danger" onclick="changeOrganizerApproval(\''+x.id+'\',false)">Revoke</button>':'<div class="actions"><button class="btn" onclick="changeOrganizerApproval(\''+x.id+'\',true)">Approve</button><button class="btn danger" onclick="changeOrganizerApproval(\''+x.id+'\',false)">Reject</button></div>'}</td></tr>`).join('')}
+async function changeOrganizerApproval(id,approved){if(!isMainAuthority){alert('Only the main authority can approve organizers.');return}if(!confirm((approved?'Approve':'Reject')+' this organizer account?'))return;const {data,error}=await supabaseClient.rpc('set_organizer_approval',{p_user_id:id,p_approved:approved});if(error){alert('Could not update organizer approval: '+error.message);return}loadOrganizerRequests()}
 </script>
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script>
-let scanner=null;
-async function startScanner(){
-  const msg=document.getElementById('scanMsg');
-  try{
-    if(scanner){await scanner.clear().catch(()=>{});}
-    scanner=new Html5Qrcode("qr-reader");
-    await scanner.start({facingMode:"environment"},{fps:10,qrbox:{width:250,height:250}},
-      async text=>{await scanner.stop().catch(()=>{}); await checkIn(text.trim());},
-      ()=>{});
-    msg.textContent='Camera active. Point it at the ticket QR.';
-  }catch(e){msg.textContent='Camera could not start. Use manual ticket ID check-in.';}
-}
-async function checkIn(ticketId){
-  const msg=document.getElementById('checkMsg');
-  ticketId=(ticketId||'').trim();
-  if(!ticketId){msg.textContent='Enter a ticket ID.';return;}
-  const {data,error}=await supabaseClient.from('registrations')
-    .select('id,name,roll_number,ticket_id,ticket_status,checked_in_at')
-    .eq('ticket_id',ticketId).maybeSingle();
-  if(error||!data){msg.textContent='Invalid ticket.';return;}
-  if(data.ticket_status!=='issued'){msg.textContent='Ticket is not issued/verified.';return;}
-  if(data.checked_in_at){msg.textContent='Already checked in: '+data.name;return;}
-  const {error:upErr}=await supabaseClient.from('registrations')
-    .update({checked_in_at:new Date().toISOString()}).eq('id',data.id).is('checked_in_at',null);
-  if(upErr){msg.textContent='Check-in failed.';return;}
-  msg.textContent='✓ Checked in: '+data.name+' ('+data.roll_number+')';
-  loadRegistrations();
-}
+let scanner=null;async function startScanner(){const msg=document.getElementById('scanMsg');try{if(scanner)await scanner.clear().catch(()=>{});scanner=new Html5Qrcode('qr-reader');await scanner.start({facingMode:'environment'},{fps:10,qrbox:{width:250,height:250}},async text=>{await scanner.stop().catch(()=>{});await checkIn(text.trim())},()=>{});msg.textContent='Camera active. Point it at the ticket QR.'}catch(e){msg.textContent='Camera could not start. Use manual ticket ID check-in.'}}
+async function checkIn(ticketId){const msg=document.getElementById('checkMsg');ticketId=(ticketId||'').trim();if(!ticketId){msg.textContent='Enter a ticket ID.';return}const {data,error}=await supabaseClient.from('registrations').select('id,name,roll_number,ticket_id,ticket_status,checked_in_at').eq('ticket_id',ticketId).maybeSingle();if(error||!data){msg.textContent='Invalid ticket.';return}if(data.ticket_status!=='issued'){msg.textContent='Ticket is not issued/verified.';return}if(data.checked_in_at){msg.textContent='Already checked in: '+data.name;return}const {error:upErr}=await supabaseClient.from('registrations').update({checked_in_at:new Date().toISOString()}).eq('id',data.id).is('checked_in_at',null);if(upErr){msg.textContent='Check-in failed.';return}msg.textContent='✓ Checked in: '+data.name+' ('+data.roll_number+')';loadRegistrations()}
 </script>
 </body></html>

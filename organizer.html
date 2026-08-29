@@ -2,43 +2,105 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Organizer Login | Freshers'26</title>
+<title>Organizer Portal | Freshers'26</title>
 <style>
 *{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:#080b15;color:#f7f8fc;display:grid;place-items:center;padding:22px}
-.wrap{width:min(430px,100%)}.brand{text-align:center;margin-bottom:24px}.logo{width:76px;height:64px;object-fit:contain;margin-bottom:8px}.brand h1{font-size:25px;margin:0}.brand p{margin:6px 0;color:#9299aa}
+.wrap{width:min(470px,100%)}.brand{text-align:center;margin-bottom:24px}.logo{width:76px;height:64px;object-fit:contain;margin-bottom:8px}.brand h1{font-size:25px;margin:0}.brand p{margin:6px 0;color:#9299aa}
 .card{background:#111522;border:1px solid #242a3b;border-radius:25px;padding:26px;box-shadow:0 25px 70px #0008}.tag{display:inline-block;padding:7px 11px;border-radius:999px;background:#193f2e;color:#7ee2a9;font-size:12px;font-weight:800;margin-bottom:13px}
-h2{margin:0 0 7px;font-size:27px}p{color:#9299aa;line-height:1.5}label{display:block;margin:17px 0 7px;font-weight:750;font-size:13px}input{width:100%;padding:14px 15px;border-radius:13px;border:1px solid #303649;background:#0c101b;color:#fff;font:inherit;outline:none}input:focus{border-color:#f6a817}
-button{width:100%;padding:14px;border:0;border-radius:13px;background:#f6a817;color:#111;font-size:16px;font-weight:900;margin-top:20px}button:hover{filter:brightness(1.05)}.error{min-height:20px;color:#ff8585;font-size:13px;margin-top:12px}.hint{font-size:12px;margin-top:18px}.back{display:block;text-align:center;margin-top:18px;color:#b6bdca;font-size:13px}
+h2{margin:0 0 7px;font-size:27px}p{color:#9299aa;line-height:1.5}label{display:block;margin:17px 0 7px;font-weight:750;font-size:13px}
+input{width:100%;padding:14px 15px;border-radius:13px;border:1px solid #303649;background:#0c101b;color:#fff;font:inherit;outline:none}input:focus{border-color:#f6a817}
+button{width:100%;padding:14px;border:0;border-radius:13px;background:#f6a817;color:#111;font-size:16px;font-weight:900;margin-top:20px;cursor:pointer}
+button.secondary{background:#202538;color:#fff;margin-top:12px}button:hover{filter:brightness(1.05)}.error{min-height:20px;color:#ff8585;font-size:13px;margin-top:12px}.ok{color:#7ee2a9;font-size:13px;margin-top:12px}.hint{font-size:12px;margin-top:18px}.back{display:block;text-align:center;margin-top:18px;color:#b6bdca;font-size:13px;cursor:pointer}
+.tabbar{display:flex;gap:8px;margin-bottom:20px}.tabbar button{margin:0;background:#202538;color:#aeb5c4}.tabbar button.active{background:#f6a817;color:#111}
+.hidden{display:none}.small{font-size:12px}
 </style>
 </head>
 <body>
 <div class="wrap">
-<div class="brand"><img class="logo" src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU"><h1>FRESHERS'26</h1><p>Organizer Portal • Mathematics & Computing • SMVDU</p></div>
-<div class="card">
-<span class="tag">ORGANIZER ACCESS</span><h2>Welcome back</h2><p>Sign in to manage registrations, payments, tickets, check-ins and event expenses.</p>
-<label>Organizer Email</label><input id="id" autocomplete="username" placeholder="Enter organizer email">
-<label>Password</label><input id="pw" type="password" autocomplete="current-password" placeholder="Enter password">
-<button onclick="login()">Sign in to dashboard</button><div id="error" class="error"></div>
-<p class="hint">Protected by Supabase Authentication. Access is granted only to approved organizer accounts.</p>
-</div>
-<a class="back" href="index.html">← Back to Freshers'26 website</a>
+  <div class="brand"><img class="logo" src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU"><h1>FRESHERS'26</h1><p>Organizer Portal • Mathematics & Computing • SMVDU</p></div>
+  <div class="card">
+    <div class="tabbar">
+      <button id="loginTab" class="active" onclick="switchTab('login')">Sign in</button>
+      <button id="signupTab" onclick="switchTab('signup')">Create organizer account</button>
+    </div>
+
+    <section id="loginBox">
+      <span class="tag">ORGANIZER ACCESS</span><h2>Welcome back</h2>
+      <p>Sign in to manage registrations, payments, tickets, check-ins and event expenses.</p>
+      <label>Organizer Email</label><input id="id" autocomplete="username" placeholder="Enter organizer email">
+      <label>Password</label><input id="pw" type="password" autocomplete="current-password" placeholder="Enter password">
+      <button onclick="login()">Sign in to dashboard</button><div id="loginError" class="error"></div>
+      <p class="hint">Only approved organizer accounts can enter the dashboard.</p>
+    </section>
+
+    <section id="signupBox" class="hidden">
+      <span class="tag">ORGANIZER REGISTRATION</span><h2>Request organizer access</h2>
+      <p>Create your account. An admin must approve it before you can access the organizer dashboard.</p>
+      <label>Full name</label><input id="fullName" autocomplete="name" placeholder="Enter your full name">
+      <label>Email</label><input id="signupEmail" type="email" autocomplete="email" placeholder="Enter your email">
+      <label>Password</label><input id="signupPassword" type="password" autocomplete="new-password" placeholder="Create a password">
+      <label>Confirm password</label><input id="signupPassword2" type="password" autocomplete="new-password" placeholder="Confirm your password">
+      <button onclick="signup()">Submit organizer request</button>
+      <div id="signupError" class="error"></div><div id="signupOk" class="ok"></div>
+      <p class="hint">You will remain blocked until an admin changes your account to approved.</p>
+    </section>
+  </div>
+  <a class="back" href="index.html">← Back to Freshers'26 website</a>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://sydxhbamuobtimsqnzyu.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_CkwLvVJdxPGbi5YjR9B24Q_7dMyN-To';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-async function login(){
- const email=document.getElementById('id').value.trim().toLowerCase();
- const password=document.getElementById('pw').value;
- const error=document.getElementById('error'); error.textContent='';
- if(!email||!password){error.textContent='Enter your email and password.';return;}
- const {data,error:authError}=await supabaseClient.auth.signInWithPassword({email,password});
- if(authError){console.error('Login error:',authError);error.textContent='Invalid email or password.';return;}
- const {data:profile,error:profileError}=await supabaseClient.from('profiles').select('email,role,approved,full_name').eq('id',data.user.id).single();
- if(profileError||!profile||!profile.approved){console.error('Profile check error:',profileError);await supabaseClient.auth.signOut();error.textContent='Your organizer account is pending approval or disabled.';return;}
- location.href='admin.html';
+
+function switchTab(tab){
+  document.getElementById('loginBox').classList.toggle('hidden',tab!=='login');
+  document.getElementById('signupBox').classList.toggle('hidden',tab!=='signup');
+  document.getElementById('loginTab').classList.toggle('active',tab==='login');
+  document.getElementById('signupTab').classList.toggle('active',tab==='signup');
 }
+async function login(){
+  const email=document.getElementById('id').value.trim().toLowerCase(), password=document.getElementById('pw').value;
+  const error=document.getElementById('loginError'); error.textContent='';
+  if(!email||!password){error.textContent='Enter your email and password.';return;}
+  const {data,error:authError}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(authError){console.error(authError);error.textContent='Invalid email or password.';return;}
+  const {data:profile,error:profileError}=await supabaseClient.from('profiles').select('email,role,approved,full_name').eq('id',data.user.id).single();
+  if(profileError||!profile||profile.approved!==true||(profile.role!=='organizer'&&profile.role!=='admin')){
+    await supabaseClient.auth.signOut(); error.textContent='Your organizer request is still pending approval or the account is disabled.';return;
+  }
+  location.href='admin.html';
+}
+async function signup(){
+  const name=document.getElementById('fullName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim().toLowerCase();
+  const password=document.getElementById('signupPassword').value;
+  const password2=document.getElementById('signupPassword2').value;
+  const err=document.getElementById('signupError'), ok=document.getElementById('signupOk'); err.textContent='';ok.textContent='';
+  if(!name||!email||!password||!password2){err.textContent='Please fill every field.';return;}
+  if(password.length<6){err.textContent='Password must be at least 6 characters.';return;}
+  if(password!==password2){err.textContent='Passwords do not match.';return;}
+  const {data,error}=await supabaseClient.auth.signUp({
+    email,password,
+    options:{data:{full_name:name,requested_role:'organizer'},emailRedirectTo:location.origin+'/organizer.html'}
+  });
+  if(error){console.error(error);err.textContent=error.message;return;}
+  if(data.session){
+    await supabaseClient.auth.signOut();
+    ok.textContent='Request submitted. Your organizer account is pending approval by the main authority.';
+  }else{
+    ok.textContent='Account created. If email confirmation is enabled, confirm your email first. Your organizer request is already pending approval.';
+  }
+}
+async function finishConfirmedSignup(){
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(session && session.user.user_metadata?.requested_role==='organizer'){
+    await supabaseClient.auth.signOut();
+    switchTab('login');
+    document.getElementById('loginError').textContent='Email confirmed. Your organizer request is pending main-authority approval.';
+  }
+}
+finishConfirmedSignup();
 document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 </script>
 </body></html>
