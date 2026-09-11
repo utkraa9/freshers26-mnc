@@ -99,7 +99,7 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
   <div>
     <label>Upload Payment Screenshot <span style="color:#d93025">*</span></label>
     <input type="file" id="screenshotFile" accept="image/*">
-    <p class="sub" style="font-size:12px;margin:4px 0 16px">Upload the receipt screen showing the transaction amount, date, and UTR/ref number.</p>
+    <p class="sub" style="font-size:12px;margin:4px 0 16px">Upload the receipt screen showing the transaction amount, date, and status.</p>
     
     <div class="btns">
       <button class="btn primary" id="submitProofBtn" onclick="submitRegistrationWithProof()">Submit Proof & Register</button>
@@ -109,8 +109,36 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-s
 
 <p id="msg" class="sub" style="margin-top:16px"></p>
 
-<div class="card" style="margin-top:16px"><h3>Check ticket status</h3><div class="row"><div><label>Ticket ID</label><input id="lookupTicket" placeholder="FR26-..."></div><div class="btns" style="align-items:end"><button class="btn primary" onclick="lookupTicket()">Check status</button></div></div><p id="lookupMsg" class="sub"></p><div id="lookupQr" style="margin-top:12px"></div></div>
-<div id="ticketCard" class="ticket"><div class="ticket-top"><b>FRESHERS'26</b><div style="opacity:.8">MATHEMATICS & COMPUTING • SMVDU</div></div><div class="ticket-body"><div><div class="ticket-id" id="tid"></div><h2 id="tn"></h2><p id="td" class="sub"></p><b id="tstatus">PAYMENT PENDING VERIFICATION</b></div></div></div>
+<div class="card" style="margin-top:16px">
+  <h3>Check ticket status</h3>
+  <div class="row">
+    <div>
+      <label>Roll Number or Ticket/Ref ID</label>
+      <input id="lookupTicket" placeholder="e.g. 25bcm050 or FR26-...">
+    </div>
+    <div class="btns" style="align-items:end">
+      <button class="btn primary" onclick="lookupTicket()">Check status</button>
+    </div>
+  </div>
+  <p id="lookupMsg" class="sub"></p>
+  <div id="lookupQr" style="margin-top:12px;display:flex;justify-content:center"></div>
+</div>
+
+<div id="ticketCard" class="ticket">
+  <div class="ticket-top">
+    <b>FRESHERS'26</b>
+    <div style="opacity:.8">MATHEMATICS & COMPUTING • SMVDU</div>
+  </div>
+  <div class="ticket-body">
+    <div>
+      <div class="ticket-id" id="tid"></div>
+      <h2 id="tn" style="margin:8px 0"></h2>
+      <p id="td" class="sub" style="margin:0 0 10px"></p>
+      <b id="tstatus" style="display:inline-block;padding:6px 12px;border-radius:6px;background:#eee"></b>
+    </div>
+  </div>
+</div>
+
 </div></div></section>
 
 <section id="about"><div class="wrap"><h2 class="section-title">About Freshers'26</h2><p class="sub">A contribution and entry portal for the Mathematics & Computing Freshers'26 event at Shri Mata Vaishno Devi University.</p><div class="grid"><div class="card"><h3>📅 Date</h3><p class="soon">Coming Soon</p></div><div class="card"><h3>📍 Venue</h3><p class="soon">To Be Announced</p></div><div class="card"><h3>🎟️ Entry</h3><p>Verified contributors receive a unique event ticket.</p></div></div></div></section>
@@ -122,11 +150,11 @@ const SUPABASE_URL='https://sydxhbamuobtimsqnzyu.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZHhoYmFtdW9idGltc3Fuenl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5MjA1NTgsImV4cCI6MjEwMzQ5NjU1OH0._StuiHuoBYixysRqRW5EUVLO-4gqSlgUJ38xPIkR-vw';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 
-// EDIT YOUR 2 TO 3 ORGANIZER UPI ACCOUNTS HERE:
+// UPDATE YOUR ORGANIZER UPI ACCOUNTS HERE:
 const UPI_ACCOUNTS = [
-  { id: 'acc1', label: 'Account 1', name: 'Utkarsh Pal', upiId: 'pal.utkarsh440-1@okaxis' },
-  { id: 'acc2', label: 'Account 2', name: 'Utkarsh Pal', upiId: 'pal.utkarsh440-2@okhdfcbank' },
-  { id: 'acc3', label: 'Account 3', name: 'Utkarsh Pal', upiId: 'pal.utkarsh440-1@oksbi' }
+  { id: 'acc1', label: 'Account 1 (Utkarsh)', name: 'Utkarsh Pal', upiId: 'pal.utkarsh440-1@okaxis' },
+  { id: 'acc2', label: 'Account 2', name: 'Organizer Two', upiId: 'pal.utkarsh440-2@okhdfcbank' },
+  { id: 'acc3', label: 'Account 3', name: 'Organizer Three', upiId: 'pal.utkarsh440-1@oksbi' }
 ];
 
 let selectedAccount = UPI_ACCOUNTS[0];
@@ -186,7 +214,8 @@ function renderQrCode(){
   const amount=cat==='senior'?settings.senior_fee:settings.junior_fee;
   if(!amount) return;
 
-  const upiUri = `upi://pay?pa=${selectedAccount.upiId}&pn=${encodeURIComponent(selectedAccount.name)}&am=${amount}&cu=INR&tn=Freshers26`;
+  const txnRef = 'FR26' + Date.now().toString().slice(-6);
+  const upiUri = `upi://pay?pa=${selectedAccount.upiId}&pn=${encodeURIComponent(selectedAccount.name)}&mc=0000&tid=${txnRef}&tr=${txnRef}&tn=Freshers26&am=${amount}&cu=INR`;
   
   document.getElementById('accHolder').textContent = selectedAccount.name;
   document.getElementById('accUpi').textContent = selectedAccount.upiId;
@@ -247,7 +276,7 @@ async function submitRegistrationWithProof(){
   const fileExt = file.name.split('.').pop();
   const filePath = `${registrationId}-${Date.now()}.${fileExt}`;
 
-  // 1. Upload screenshot to Supabase Storage 'payment-screenshots' bucket
+  // 1. Upload screenshot
   const { data: uploadData, error: uploadErr } = await supabaseClient
     .storage
     .from('payment-screenshots')
@@ -269,7 +298,11 @@ async function submitRegistrationWithProof(){
 
   msg.textContent='Saving registration...';
 
-  // 2. Insert registration with screenshot proof
+  // Generate Reference Tracking Code
+  const cleanRoll = roll.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+  const refCode = 'REF-' + cleanRoll + '-' + Math.floor(1000 + Math.random() * 9000);
+
+  // 2. Insert registration
   const { error: insertErr } = await supabaseClient.from('registrations').insert({
     id: registrationId,
     name,
@@ -279,6 +312,7 @@ async function submitRegistrationWithProof(){
     category,
     amount,
     payment_status: 'pending',
+    ticket_id: refCode,
     notes: `Paid to ${selectedAccount.label} (${selectedAccount.upiId}). Proof: ${screenshotUrl}`
   });
 
@@ -289,12 +323,15 @@ async function submitRegistrationWithProof(){
     return;
   }
 
-  msg.textContent='Submitted successfully! Your payment proof is under organizer review.';
-  document.getElementById('tid').textContent='VERIFICATION PENDING';
-  document.getElementById('tn').textContent=name;
-  document.getElementById('td').textContent=roll+' • '+(category==='senior'?'Senior':'Junior');
-  document.getElementById('tstatus').textContent='PAYMENT UNDER REVIEW';
-  document.getElementById('ticketCard').style.display='block';
+  msg.textContent='Submitted successfully! Keep your Reference ID to check status.';
+  document.getElementById('tid').textContent = refCode;
+  document.getElementById('tn').textContent = name;
+  document.getElementById('td').textContent = roll + ' • ' + (category==='senior'?'Senior':'Junior');
+  document.getElementById('tstatus').textContent = 'PAYMENT UNDER REVIEW';
+  document.getElementById('tstatus').style.background = '#fff4e5';
+  document.getElementById('tstatus').style.color = '#b76e00';
+  document.getElementById('ticketCard').style.display = 'block';
+  document.getElementById('lookupTicket').value = roll;
   document.getElementById('ticketCard').scrollIntoView({behavior:'smooth',block:'center'});
   submitProofBtn.disabled=false;
 }
@@ -302,16 +339,59 @@ async function submitRegistrationWithProof(){
 loadSettings();
 
 async function lookupTicket(){
-  const id=document.getElementById('lookupTicket').value.trim();
-  const msg=document.getElementById('lookupMsg'), box=document.getElementById('lookupQr');
-  box.innerHTML='';
-  if(!id){msg.textContent='Enter your ticket ID.';return;}
-  const {data,error}=await supabaseClient.rpc('get_ticket_status',{p_ticket_id:id});
-  if(error||!data?.length){console.error('Ticket lookup error:',error);msg.textContent='Ticket not found or pending verification.';return;}
-  const t=data[0];
-  if(t.ticket_status!=='issued'){msg.textContent='Payment is still pending verification.';return;}
-  msg.textContent=t.checked_in?'Ticket verified. Already checked in.':'Ticket issued and valid.';
-  new QRCode(box,{text:t.ticket_id,width:180,height:180});
+  const query = document.getElementById('lookupTicket').value.trim();
+  const msg = document.getElementById('lookupMsg'), box = document.getElementById('lookupQr');
+  box.innerHTML = '';
+
+  if(!query){
+    msg.textContent = 'Enter your Roll Number or Ticket/Ref ID.';
+    return;
+  }
+
+  msg.textContent = 'Searching...';
+
+  // Find latest registration by roll number or ticket_id
+  const { data, error } = await supabaseClient
+    .from('registrations')
+    .select('*')
+    .or(`ticket_id.ilike.%${query}%,roll_number.ilike.${query}`)
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  if(error || !data || data.length === 0){
+    console.error('Ticket lookup error:', error);
+    msg.textContent = 'No registration found for that Roll Number or ID.';
+    return;
+  }
+
+  const reg = data[0];
+
+  document.getElementById('tid').textContent = reg.ticket_id || 'PENDING APPROVAL';
+  document.getElementById('tn').textContent = reg.name;
+  document.getElementById('td').textContent = reg.roll_number + ' • ' + reg.category.toUpperCase();
+
+  if(reg.payment_status === 'verified' || reg.ticket_status === 'issued'){
+    msg.textContent = 'Payment verified! Here is your event ticket.';
+    const statusElem = document.getElementById('tstatus');
+    statusElem.textContent = 'TICKET ISSUED & VERIFIED';
+    statusElem.style.background = '#eaf5ee';
+    statusElem.style.color = '#0d7a45';
+    document.getElementById('ticketCard').style.display = 'block';
+    
+    // Generate Entry QR Code
+    new QRCode(box, {
+      text: reg.ticket_qr_token || reg.ticket_id,
+      width: 180,
+      height: 180
+    });
+  } else {
+    msg.textContent = 'Your payment screenshot is still under review by organizers.';
+    const statusElem = document.getElementById('tstatus');
+    statusElem.textContent = 'PAYMENT UNDER REVIEW';
+    statusElem.style.background = '#fff4e5';
+    statusElem.style.color = '#b76e00';
+    document.getElementById('ticketCard').style.display = 'block';
+  }
 }
 </script>
 </body>
