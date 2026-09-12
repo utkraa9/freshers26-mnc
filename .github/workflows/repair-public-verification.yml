@@ -1,0 +1,39 @@
+name: Repair public verification lookup
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch public lookup
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          patch = Path('lookup_patch.txt').read_text(encoding='utf-8')
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          start = s.find('async function lookupTicket(){')
+          if start < 0:
+              raise SystemExit('lookupTicket start not found')
+          m = re.search(r'(?:async function [A-Za-z_]+\(|function [A-Za-z_]+\(|const renderer=|</script>)', s[start+30:])
+          if not m:
+              raise SystemExit('lookupTicket end not found')
+          end = start + 30 + m.start()
+          p.write_text(s[:start] + patch + s[end:], encoding='utf-8')
+          PY
+      - name: Validate files
+        run: |
+          node --check api/ticket-lookup.js
+      - name: Commit fix and remove temporary files
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm -f lookup_patch.txt .github/workflows/repair-public-verification.yml
+          git add index.html api/ticket-lookup.js lookup_patch.txt .github/workflows/repair-public-verification.yml
+          git commit -m 'fix: route public ticket verification through secure endpoint'
+          git push
