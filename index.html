@@ -4,395 +4,544 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Freshers'26 | Mathematics & Computing | SMVDU</title>
-<style>
-:root{--ink:#101525;--muted:#697386;--line:#e4e8e5;--bg:#f7faf8;--card:#fff;--accent:#176b43;--green:#0d7a45;--orange:#f39a16;--navy:#15243a}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
-a{text-decoration:none;color:inherit}.nav{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.navin{max-width:1100px;margin:auto;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.brand{font-weight:900;letter-spacing:.4px;display:flex;align-items:center;gap:10px}.brand-logo{width:42px;height:42px;object-fit:contain}.brand small{display:block;color:var(--muted);font-weight:600;font-size:12px;margin-top:2px}
-.links{display:flex;gap:24px;font-weight:700;font-size:14px;align-items:center}.links a:hover{color:var(--accent)}.organizer-link{padding:9px 13px;border-radius:10px;background:var(--ink);color:#fff!important;font-weight:850}.organizer-link:hover{opacity:.92}
-.wrap{max-width:1100px;margin:auto;padding:0 20px}.hero{padding:72px 0 40px;display:grid;grid-template-columns:1.05fr .95fr;gap:42px;align-items:center}
-.pill{display:inline-flex;align-items:center;gap:8px;background:#eaf5ee;color:#176b43;padding:10px 14px;border-radius:999px;font-weight:800;font-size:13px}
-h1{font-size:clamp(54px,8vw,92px);line-height:.88;margin:22px 0;letter-spacing:-4px}.hero p{font-size:19px;line-height:1.55;color:var(--muted);max-width:640px}
-.btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}.btn{padding:14px 20px;border-radius:14px;font-weight:850;border:1px solid var(--line);background:white;cursor:pointer}.primary{background:var(--ink);color:white;border-color:var(--ink)}
-.art{min-height:410px;border-radius:30px;padding:38px;background:linear-gradient(145deg,#10263a,#176b43 65%,#f39a16);color:#fff;box-shadow:0 24px 60px rgba(48,39,130,.22);display:flex;flex-direction:column;justify-content:space-between}
-.math{font-size:58px;line-height:1.1;letter-spacing:8px}.art .big{font-size:30px;font-weight:900}.art small{opacity:.72}
-section{padding:46px 0}.section-title{font-size:30px;margin:0 0 8px}.sub{color:var(--muted);margin:0 0 22px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 8px 30px rgba(16,21,37,.04)}
-.card h3{margin:0 0 10px}.amount{font-size:30px;font-weight:900;margin:14px 0}.soon{color:#7b8495;font-weight:800}
-.form{max-width:720px}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;font-weight:800;font-size:13px;margin:12px 0 6px}input,select{width:100%;padding:14px;border:1px solid #dfe3ea;border-radius:12px;font:inherit;background:white}
-.category-card{transition:.15s ease}.category-card.selected{border:2px solid var(--orange);box-shadow:0 0 0 3px rgba(243,154,22,.12)}
-.ticket{display:none;margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:24px;overflow:hidden}.ticket-top{background:linear-gradient(135deg,#171b42,#5b45e6);color:#fff;padding:24px}.ticket-body{padding:22px}.ticket-id{font-weight:900;letter-spacing:1px}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 
-/* UPI Payment & Dynamic QR styling */
-.payment-box{display:none;margin-top:24px;padding:24px;border-radius:18px;background:#fbfdfc;border:2px dashed #b7dec9}
-.account-tabs{display:flex;gap:8px;margin-bottom:18px;overflow-x:auto}
-.tab-btn{flex:1;padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.15s}
-.tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.qr-container{display:flex;flex-direction:column;align-items:center;padding:16px;background:#fff;border-radius:14px;border:1px solid var(--line);max-width:280px;margin:0 auto 20px}
-#liveQrCode{padding:10px;background:#fff;border-radius:8px}
-#liveQrCode img,#liveQrCode canvas{margin:auto}
-.copy-pill{display:inline-flex;align-items:center;gap:6px;background:#f0f4f2;padding:6px 12px;border-radius:999px;font-size:12px;font-family:monospace;font-weight:700;margin-top:8px;cursor:pointer}
-footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:13px}
-@media(max-width:760px){.links{gap:12px;font-size:12px}.hero{grid-template-columns:1fr;padding-top:45px}.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.art{min-height:330px}.math{font-size:44px}h1{letter-spacing:-3px}}
+<style>
+:root {
+  --fx-black: #06070a;
+  --fx-surface: rgba(18, 19, 26, 0.75);
+  --fx-border: rgba(255, 255, 255, 0.08);
+  --fx-border-focus: rgba(235, 30, 45, 0.6);
+  --fx-white: #f8fafc;
+  --fx-muted: #94a3b8;
+  --fx-red: #eb1e2d;
+  --fx-red-soft: #ff3344;
+  --fx-red-glow: rgba(235, 30, 45, 0.3);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background-color: var(--fx-black);
+  color: var(--fx-white);
+  overflow-x: hidden;
+}
+
+#webgl-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.cursor-light {
+  position: fixed;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(235, 30, 45, 0.06) 0%, transparent 70%);
+  transition: transform 0.08s ease-out;
+}
+
+/* Nav */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(6, 7, 10, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--fx-border);
+}
+.navin {
+  max-width: 1160px;
+  margin: auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 800;
+}
+.brand-logo { width: 36px; height: 36px; object-fit: contain; }
+.brand small { display: block; font-size: 11px; color: var(--fx-muted); font-weight: 500; }
+.links { display: flex; gap: 24px; align-items: center; font-size: 14px; font-weight: 600; }
+.links a { color: var(--fx-muted); text-decoration: none; transition: color 0.2s; }
+.links a:hover { color: #fff; }
+.organizer-link {
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--fx-border);
+  color: #fff !important;
+}
+
+.wrap { max-width: 1160px; margin: auto; padding: 0 24px; }
+
+/* Hero */
+.hero {
+  padding: 85px 0 50px;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 48px;
+  align-items: center;
+}
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(235, 30, 45, 0.1);
+  border: 1px solid rgba(235, 30, 45, 0.25);
+  color: var(--fx-red-soft);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 18px;
+}
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--fx-red);
+  box-shadow: 0 0 10px var(--fx-red);
+}
+
+h1 {
+  font-size: clamp(52px, 7vw, 80px);
+  line-height: 0.95;
+  font-weight: 900;
+  letter-spacing: -3px;
+  margin-bottom: 20px;
+}
+h1 span {
+  background: linear-gradient(135deg, #fff 40%, var(--fx-muted) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero p { color: var(--fx-muted); font-size: 17px; line-height: 1.6; max-width: 520px; }
+.btns { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 26px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 12px;
+  border: 1px solid var(--fx-border);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.btn.primary {
+  background: linear-gradient(135deg, var(--fx-red), #b70b17);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 6px 25px var(--fx-red-glow);
+}
+.btn.primary:hover {
+  box-shadow: 0 10px 32px rgba(235, 30, 45, 0.5);
+}
+
+/* 3D Hero Art Plaque */
+.hero-art-container { perspective: 1000px; }
+.art-3d-card {
+  min-height: 400px;
+  border-radius: 26px;
+  padding: 36px;
+  background: linear-gradient(145deg, rgba(25, 26, 36, 0.8), rgba(12, 13, 18, 0.85));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform-style: preserve-3d;
+  transition: transform 0.2s ease-out;
+}
+.art-math {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  line-height: 1.15;
+  background: linear-gradient(135deg, #fff 20%, rgba(255, 255, 255, 0.2) 90%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: translateZ(40px);
+}
+.art-meta { transform: translateZ(25px); }
+.art-meta .big { font-size: 24px; font-weight: 800; }
+.art-meta small { color: var(--fx-muted); font-size: 13px; }
+
+/* Sections */
+section { padding: 48px 0; }
+.section-title { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+.sub { color: var(--fx-muted); font-size: 15px; margin-bottom: 26px; }
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+/* Decorative Card with Controlled Tilt */
+.tilt-card {
+  background: var(--fx-surface);
+  border: 1px solid var(--fx-border);
+  border-radius: 20px;
+  padding: 26px;
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease-out, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.tilt-card:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+.tilt-card.selected {
+  border-color: var(--fx-red) !important;
+  box-shadow: 0 0 0 2px var(--fx-red), 0 16px 40px rgba(235, 30, 45, 0.2) !important;
+}
+.amount {
+  font-size: 32px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+  margin: 12px 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Registration */
+.form-wrapper { max-width: 760px; margin: 0 auto; }
+.stable-card {
+  background: rgba(14, 15, 22, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 22px;
+  padding: 32px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+.stable-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 15%; right: 15%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(235, 30, 45, 0.45), transparent);
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 4px; }
+label { display: block; font-size: 12.5px; font-weight: 700; color: #cbd5e1; margin: 12px 0 6px; letter-spacing: 0.4px; text-transform: uppercase; }
+input, select {
+  width: 100%; padding: 13px 16px; border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.035); color: #fff;
+  font-family: inherit; font-size: 14px;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+input::placeholder { color: #64748b; }
+input:focus, select:focus { outline: none; background: rgba(255, 255, 255, 0.06); border-color: var(--fx-red); box-shadow: 0 0 0 3px rgba(235, 30, 45, 0.18); }
+
+/* Payment */
+.payment-box { display: none; margin-top: 26px; padding: 26px; border-radius: 16px; background: rgba(9, 10, 15, 0.95); border: 1px solid rgba(235, 30, 45, 0.25); box-shadow: 0 14px 40px rgba(0, 0, 0, 0.55); }
+.account-tabs { display: flex; gap: 8px; margin: 16px 0 20px; }
+.tab-btn { flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.03); color: var(--fx-muted); font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s ease; }
+.tab-btn.active { background: var(--fx-red); color: #fff; border-color: var(--fx-red); box-shadow: 0 4px 16px var(--fx-red-glow); }
+.qr-container { display: flex; flex-direction: column; align-items: center; padding: 18px; background: #fff; border-radius: 16px; max-width: 230px; margin: 0 auto 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+.copy-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.08); padding: 7px 14px; border-radius: 999px; font-size: 12px; font-family: 'JetBrains Mono', monospace; font-weight: 600; margin-top: 10px; cursor: pointer; border: 1px solid var(--fx-border); transition: background 0.2s ease; }
+.copy-pill:hover { background: rgba(255, 255, 255, 0.15); }
+
+/* Ticket */
+.ticket { display: none; margin-top: 26px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.15); background: linear-gradient(135deg, rgba(22, 23, 32, 0.95), rgba(12, 13, 18, 0.98)); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); }
+.ticket-top { padding: 20px 24px; background: linear-gradient(90deg, #e50914, #8b0811); display: flex; justify-content: space-between; align-items: center; }
+.ticket-body { padding: 24px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.ticket-id { font-family: 'JetBrains Mono', monospace; font-weight: 800; color: #fff; }
+
+/* About / Instagram */
+.about-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.about-card { background: var(--fx-surface); border: 1px solid var(--fx-border); border-radius: 20px; padding: 24px; }
+.instagram-card { margin-top: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; background: linear-gradient(135deg, rgba(235,30,45,.09), rgba(255,255,255,.03)); border: 1px solid rgba(235,30,45,.2); border-radius: 20px; padding: 18px 20px; }
+.instagram-btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 13px; border-radius: 10px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); color: #fff; font-size: 12px; font-weight: 700; transition: transform .2s ease, background .2s ease; }
+.instagram-btn:hover { transform: translateY(-2px); background: rgba(255,255,255,.1); }
+.instagram-icon { width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; }
+
+footer { border-top: 1px solid var(--fx-border); padding: 28px 0; color: var(--fx-muted); font-size: 13px; }
+
+@media(max-width:760px){
+  .links { gap: 12px; font-size: 12px; }
+  .hero { grid-template-columns: 1fr; padding-top: 45px; }
+  .grid, .about-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .art-3d-card { min-height: 330px; }
+  .art-math { font-size: 44px; }
+  h1 { letter-spacing: -3px; }
+  .instagram-card { flex-direction: column; align-items: flex-start; }
+}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
-<nav class="nav"><div class="navin"><a class="brand" href="#"><img class="brand-logo" src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU logo"><span>FRESHERS'26<small>Mathematics & Computing • SMVDU</small></span></a><div class="links"><a href="#contribute">Contribute</a><a href="#ticket">Ticket</a><a href="#about">About</a><a class="organizer-link" href="organizer.html">Organizer Login</a></div></div></nav>
+<canvas id="webgl-canvas"></canvas>
+<div class="cursor-light" id="cursorLight"></div>
+
+<nav class="nav"><div class="navin">
+  <a class="brand" href="#">
+    <img class="brand-logo" src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU logo">
+    <span>FRESHERS'26<small>Mathematics & Computing • SMVDU</small></span>
+  </a>
+  <div class="links">
+    <a href="#contribute">Contribute</a><a href="#ticket">Ticket</a><a href="#about">About</a>
+    <a class="organizer-link" href="organizer.html">Organizer Login</a>
+  </div>
+</div></nav>
+
 <main>
 <div class="wrap hero">
   <div>
-    <span class="pill">Shri Mata Vaishno Devi University</span>
-    <h1>Freshers'<br>26</h1>
+    <span class="badge-pill"><span class="live-dot"></span> Shri Mata Vaishno Devi University</span>
+    <h1>Freshers'<br><span>26</span></h1>
     <p>Welcome to the Freshers'26 contribution portal for Mathematics & Computing. Event date and venue will be announced soon.</p>
     <div class="btns"><a class="btn primary" href="#contribute">Contribute now</a><a class="btn" href="#ticket">Check ticket</a></div>
   </div>
-  <div class="art"><div class="math">∑ ∫ π<br>01 10<br>f(x)</div><div><div class="big">MATHEMATICS & COMPUTING</div><small>SMVDU • Freshers'26</small></div></div>
+  <div class="hero-art-container"><div class="art-3d-card" id="heroArt">
+    <div class="art-math">∑ ∫ π<br>01 10<br>f(x)</div>
+    <div class="art-meta"><div class="big">MATHEMATICS & COMPUTING</div><small>SMVDU • Freshers'26</small></div>
+  </div></div>
 </div>
 
-<section><div class="wrap"><div class="card" style="display:flex;align-items:center;gap:16px;border-left:5px solid var(--orange)"><img src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU logo" style="width:72px;height:60px;object-fit:contain"><div><b>SMVDU • Mathematics & Computing</b><div class="sub" style="margin:3px 0 0">Freshers'26 contribution & entry portal</div></div></div></div></section>
+<section><div class="wrap"><div class="about-card" style="display:flex;align-items:center;gap:16px;border-left:3px solid var(--fx-red)">
+  <img src="https://smvdu.ac.in/wp-content/uploads/2022/03/logo-600-300x223.png" alt="SMVDU logo" style="width:68px;height:56px;object-fit:contain">
+  <div><b>SMVDU • Mathematics & Computing</b><div class="sub" style="margin:3px 0 0">Freshers'26 contribution & entry portal</div></div>
+</div></div></section>
 
 <section id="contribute"><div class="wrap">
 <h2 class="section-title">Contribution</h2><p class="sub">Choose your category, then fill in your details and pay via UPI.</p>
 <div class="grid">
-<div class="card category-card" id="seniorCard" onclick="chooseCategory('senior')" style="cursor:pointer"><h3>Senior</h3><div class="amount" id="seniorFee">₹ Coming Soon</div><p class="sub">Tap to select Senior</p></div>
-<div class="card category-card" id="juniorCard" onclick="chooseCategory('junior')" style="cursor:pointer"><h3>Junior</h3><div class="amount" id="juniorFee">₹ Coming Soon</div><p class="sub">Tap to select Junior</p></div>
-<div class="card"><h3>UPI Transfer</h3><div class="amount">Direct UPI QR</div><p class="sub">Scan with GPay, PhonePe, or Paytm. Submit your transaction screenshot to get your ticket verified.</p></div>
+  <div class="tilt-card" id="seniorCard" onclick="chooseCategory('senior')"><h3>Senior</h3><div class="amount" id="seniorFee">₹ Coming Soon</div><p class="sub">Tap to select Senior</p></div>
+  <div class="tilt-card" id="juniorCard" onclick="chooseCategory('junior')"><h3>Junior</h3><div class="amount" id="juniorFee">₹ Coming Soon</div><p class="sub">Tap to select Junior</p></div>
+  <div class="tilt-card"><h3>UPI Transfer</h3><div class="amount">Direct UPI QR</div><p class="sub">Scan with GPay, PhonePe, or Paytm. Submit your transaction screenshot to get your ticket verified.</p></div>
 </div>
 </div></section>
 
 <section id="ticket"><div class="wrap"><h2 class="section-title">Registration & Payment</h2><p class="sub">Fill in your information to generate your payment QR code.</p>
-<div class="card form">
-<div class="row"><div><label>Name</label><input id="name" placeholder="Your full name"></div><div><label>Roll Number</label><input id="roll" placeholder="e.g. 25bcm050"></div></div>
-<div class="row"><div><label>Email</label><input id="email" type="email" placeholder="Your email"></div><div><label>Phone</label><input id="phone" inputmode="tel" placeholder="Your phone number"></div></div>
-<div class="row"><div><label>Category</label><select id="cat" onchange="updateAmount()"><option value="senior">Senior</option><option value="junior">Junior</option></select></div><div><label>Amount</label><input id="amount" readonly placeholder="Coming Soon"></div></div>
+<div class="form-wrapper"><div class="stable-card">
+<div class="form-row"><div><label>Name</label><input id="name" placeholder="Your full name"></div><div><label>Roll Number</label><input id="roll" placeholder="e.g. 25bcm050"></div></div>
+<div class="form-row"><div><label>Email</label><input id="email" type="email" placeholder="Your email"></div><div><label>Phone</label><input id="phone" inputmode="tel" placeholder="Your phone number"></div></div>
+<div class="form-row"><div><label>Category</label><select id="cat" onchange="updateAmount()"><option value="senior">Senior</option><option value="junior">Junior</option></select></div><div><label>Amount</label><input id="amount" readonly placeholder="Coming Soon"></div></div>
 
 <div class="btns" id="generateSection">
   <button class="btn primary" id="generateQrBtn" onclick="preparePayment()">Proceed to Pay</button>
 </div>
 
-<!-- Dynamic UPI QR and Proof Section -->
 <div class="payment-box" id="paymentBox">
   <h3 style="margin-top:0">Scan to Pay via UPI</h3>
   <p class="sub" style="font-size:13px;margin-bottom:12px">If one account hits a limit, switch to another account below:</p>
-
-  <!-- Multi-Account Selectors -->
   <div class="account-tabs" id="accountTabs"></div>
-
-  <!-- QR Visual -->
   <div class="qr-container">
     <div id="liveQrCode"></div>
-    <div style="margin-top:10px;text-align:center">
+    <div style="margin-top:10px;text-align:center;color:#111">
       <div id="accHolder" style="font-weight:800;font-size:13px"></div>
-      <div class="copy-pill" onclick="copyUpiId()">
-        <span id="accUpi"></span> 📋
-      </div>
+      <div class="copy-pill" onclick="copyUpiId"><span id="accUpi"></span> 📋</div>
     </div>
-    <a id="mobileIntentLink" href="#" style="margin-top:10px;font-size:12px;color:var(--accent);font-weight:700;text-decoration:underline">
-      Open in UPI App (Mobile)
-    </a>
   </div>
 
-  <!-- Screenshot Upload Form -->
   <div>
-    <label>Upload Payment Screenshot <span style="color:#d93025">*</span></label>
+    <label>Upload Payment Screenshot <span style="color:#ff3344">*</span></label>
     <input type="file" id="screenshotFile" accept="image/*">
     <p class="sub" style="font-size:12px;margin:4px 0 16px">Upload the receipt screen showing the transaction amount, date, and status.</p>
-    
-    <div class="btns">
-      <button class="btn primary" id="submitProofBtn" onclick="submitRegistrationWithProof()">Submit Proof & Register</button>
-    </div>
+    <div class="btns"><button class="btn primary" id="submitProofBtn" onclick="submitRegistrationWithProof()">Submit Proof & Register</button></div>
   </div>
 </div>
 
 <p id="msg" class="sub" style="margin-top:16px"></p>
 
-<div class="card" style="margin-top:16px">
+<div class="about-card" style="margin-top:16px">
   <h3>Check ticket status</h3>
-  <div class="row">
-    <div>
-      <label>Roll Number or Ticket/Ref ID</label>
-      <input id="lookupTicket" placeholder="e.g. 25bcm050 or FR26-...">
-    </div>
-    <div class="btns" style="align-items:end">
-      <button class="btn primary" onclick="lookupTicket()">Check status</button>
-    </div>
+  <div class="form-row">
+    <div><label>Roll Number or Ticket/Ref ID</label><input id="lookupTicket" placeholder="e.g. 25bcm050 or REF-..."></div>
+    <div class="btns" style="align-items:end"><button class="btn primary" onclick="lookupTicket()">Check status</button></div>
   </div>
   <p id="lookupMsg" class="sub"></p>
   <div id="lookupQr" style="margin-top:12px;display:flex;justify-content:center"></div>
 </div>
 
 <div id="ticketCard" class="ticket">
-  <div class="ticket-top">
-    <b>FRESHERS'26</b>
-    <div style="opacity:.8">MATHEMATICS & COMPUTING • SMVDU</div>
-  </div>
-  <div class="ticket-body">
-    <div>
-      <div class="ticket-id" id="tid"></div>
-      <h2 id="tn" style="margin:8px 0"></h2>
-      <p id="td" class="sub" style="margin:0 0 10px"></p>
-      <b id="tstatus" style="display:inline-block;padding:6px 12px;border-radius:6px;background:#eee"></b>
-    </div>
-  </div>
+  <div class="ticket-top"><b>FRESHERS'26</b><div style="opacity:.8">MATHEMATICS & COMPUTING • SMVDU</div></div>
+  <div class="ticket-body"><div>
+    <div class="ticket-id" id="tid"></div><h2 id="tn" style="margin:8px 0"></h2><p id="td" class="sub" style="margin:0 0 10px"></p>
+    <b id="tstatus" style="display:inline-block;padding:6px 12px;border-radius:6px;background:#eee"></b>
+  </div></div>
 </div>
 
 </div></div></section>
 
-<section id="about"><div class="wrap"><h2 class="section-title">About Freshers'26</h2><p class="sub">A contribution and entry portal for the Mathematics & Computing Freshers'26 event at Shri Mata Vaishno Devi University.</p><div class="grid"><div class="card"><h3>📅 Date</h3><p class="soon">Coming Soon</p></div><div class="card"><h3>📍 Venue</h3><p class="soon">To Be Announced</p></div><div class="card"><h3>🎟️ Entry</h3><p>Verified contributors receive a unique event ticket.</p></div></div></div></section>
+<section id="about"><div class="wrap"><h2 class="section-title">About Freshers'26</h2><p class="sub">A contribution and entry portal for the Mathematics & Computing Freshers'26 event at Shri Mata Vaishno Devi University.</p>
+<div class="about-grid">
+  <div class="about-card"><h3>📅 Date</h3><p class="sub" style="margin-top:8px">Coming Soon</p></div>
+  <div class="about-card"><h3>📍 Venue</h3><p class="sub" style="margin-top:8px">To Be Announced</p></div>
+  <div class="about-card"><h3>🎟️ Entry</h3><p class="sub" style="margin-top:8px">Verified contributors receive a unique event ticket.</p></div>
+</div>
+<div class="instagram-card">
+  <div><b>Follow Mathematics & Computing, SMVDU</b><p class="sub" style="margin:5px 0 0">Get event updates, announcements and Freshers'26 information.</p></div>
+  <a class="instagram-btn" href="https://www.instagram.com/smvdu_mnc/" target="_blank" rel="noopener noreferrer"><span class="instagram-icon">◎</span> Instagram</a>
+</div>
+</div></section>
 </main>
 <footer><div class="wrap">Freshers'26 • Mathematics & Computing • Shri Mata Vaishno Devi University</div></footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script>
 const SUPABASE_URL='https://sydxhbamuobtimsqnzyu.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZHhoYmFtdW9idGltc3Fuenl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5MjA1NTgsImV4cCI6MjEwMzQ5NjU1OH0._StuiHuoBYixysRqRW5EUVLO-4gqSlgUJ38xPIkR-vw';
+const SUPABASE_PUBLISHABLE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5ZHhoYmFtdGltc3Fuenl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc5MjA1NTgsImV4cCI6MjEwMzQ5NjU1OH0._StuiHuoBYixysRqRW5EUVLO-4gqSlgUJ38xPIkR-vw';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-
-// UPDATE YOUR ORGANIZER UPI ACCOUNTS HERE:
-const UPI_ACCOUNTS = [
-  { id: 'acc1', label: 'Account 1 (Utkarsh)', name: 'Utkarsh Pal', upiId: 'pal.utkarsh440-1@okaxis' },
-  { id: 'acc2', label: 'Account 2', name: 'Organizer Two', upiId: 'pal.utkarsh440-2@okhdfcbank' },
-  { id: 'acc3', label: 'Account 3', name: 'Organizer Three', upiId: 'pal.utkarsh440-1@oksbi' }
+const UPI_ACCOUNTS=[
+ {id:'acc1',label:'Account 1 (Utkarsh)',name:'Utkarsh Pal',upiId:'pal.utkarsh440-1@okaxis'},
+ {id:'acc2',label:'Route 2',name:'Organizer Two',upiId:'pal.utkarsh440-2@okhdfcbank'},
+ {id:'acc3',label:'Route 3',name:'Organizer Three',upiId:'pal.utkarsh440-1@oksbi'}
 ];
-
-let selectedAccount = UPI_ACCOUNTS[0];
+let selectedAccount=UPI_ACCOUNTS[0];
 let settings={};
-let qrCodeInstance = null;
 
 async function loadSettings(){
-  const {data,error}=await supabaseClient.from('event_settings').select('*').eq('id',1).single();
-  if(error||!data){console.error('Load settings error:',error);return;}
-  settings={...data};
-  const fmt=v=>v==null||v===''?'Coming Soon':'₹'+Number(v).toLocaleString('en-IN');
-  document.getElementById('seniorFee').textContent=fmt(data.senior_fee);
-  document.getElementById('juniorFee').textContent=fmt(data.junior_fee);
-  updateAmount();
+ const {data,error}=await supabaseClient.from('event_settings').select('*').eq('id',1).single();
+ if(error||!data){
+  console.error('Load settings error:',error);
+  document.getElementById('seniorFee').textContent='Unavailable';
+  document.getElementById('juniorFee').textContent='Unavailable';
+  document.getElementById('msg').textContent='Event fee data could not be loaded. Please refresh or contact the organizer.';
+  document.getElementById('msg').style.color='#ff4444';
+  return;
+ }
+ settings={...data};
+ const fmt=v=>v==null||v===''?'Coming Soon':'₹'+Number(v).toLocaleString('en-IN');
+ document.getElementById('seniorFee').textContent=fmt(data.senior_fee);
+ document.getElementById('juniorFee').textContent=fmt(data.junior_fee);
+ updateAmount();
 }
-
 function chooseCategory(category){
-  const select=document.getElementById('cat');
-  select.value=category;
-  updateAmount();
-  document.getElementById('ticket').scrollIntoView({behavior:'smooth',block:'start'});
+ document.getElementById('cat').value=category;
+ updateAmount();
+ document.getElementById('ticket').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
 function updateAmount(){
-  const cat=document.getElementById('cat').value;
-  const amount=cat==='senior'?settings.senior_fee:settings.junior_fee;
-  document.getElementById('amount').value=amount!=null?'₹'+Number(amount).toLocaleString('en-IN'):'';
-  document.getElementById('seniorCard').classList.toggle('selected',cat==='senior');
-  document.getElementById('juniorCard').classList.toggle('selected',cat==='junior');
-  const generateQrBtn=document.getElementById('generateQrBtn');
-  generateQrBtn.disabled=(amount==null);
-  generateQrBtn.style.opacity=(amount==null)?'.5':'';
-  if(document.getElementById('paymentBox').style.display === 'block'){
-    renderQrCode();
-  }
+ const cat=document.getElementById('cat').value;
+ const amount=cat==='senior'?settings.senior_fee:settings.junior_fee;
+ document.getElementById('amount').value=amount!=null?'₹'+Number(amount).toLocaleString('en-IN'):'';
+ document.getElementById('seniorCard').classList.toggle('selected',cat==='senior');
+ document.getElementById('juniorCard').classList.toggle('selected',cat==='junior');
+ const btn=document.getElementById('generateQrBtn');
+ btn.disabled=(amount==null); btn.style.opacity=amount==null?'.5':'';
+ if(document.getElementById('paymentBox').style.display==='block') renderQrCode();
 }
-
 function renderAccountTabs(){
-  const container = document.getElementById('accountTabs');
-  container.innerHTML = '';
-  UPI_ACCOUNTS.forEach(acc => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'tab-btn' + (acc.id === selectedAccount.id ? ' active' : '');
-    btn.textContent = acc.label;
-    btn.onclick = () => {
-      selectedAccount = acc;
-      renderAccountTabs();
-      renderQrCode();
-    };
-    container.appendChild(btn);
-  });
+ const container=document.getElementById('accountTabs'); container.innerHTML='';
+ UPI_ACCOUNTS.forEach(acc=>{
+  const btn=document.createElement('button'); btn.type='button'; btn.className='tab-btn'+(acc.id===selectedAccount.id?' active':''); btn.textContent=acc.label;
+  btn.onclick=()=>{selectedAccount=acc;renderAccountTabs();renderQrCode();}; container.appendChild(btn);
+ });
 }
-
 function renderQrCode(){
-  const cat=document.getElementById('cat').value;
-  const amount=cat==='senior'?settings.senior_fee:settings.junior_fee;
-  if(!amount) return;
-
-  const txnRef = 'FR26' + Date.now().toString().slice(-6);
-  const upiUri = `upi://pay?pa=${selectedAccount.upiId}&pn=${encodeURIComponent(selectedAccount.name)}&mc=0000&tid=${txnRef}&tr=${txnRef}&tn=Freshers26&am=${amount}&cu=INR`;
-  
-  document.getElementById('accHolder').textContent = selectedAccount.name;
-  document.getElementById('accUpi').textContent = selectedAccount.upiId;
-  document.getElementById('mobileIntentLink').href = upiUri;
-
-  const qrContainer = document.getElementById('liveQrCode');
-  qrContainer.innerHTML = '';
-  qrCodeInstance = new QRCode(qrContainer, {
-    text: upiUri,
-    width: 190,
-    height: 190,
-    correctLevel: QRCode.CorrectLevel.M
-  });
+ const cat=document.getElementById('cat').value;
+ const amount=cat==='senior'?settings.senior_fee:settings.junior_fee;
+ if(amount==null||Number(amount)<=0) return;
+ const txnRef='FR26'+Date.now().toString().slice(-6);
+ const upiUri=`upi://pay?pa=${selectedAccount.upiId}&pn=${encodeURIComponent(selectedAccount.name)}&mc=0000&tid=${txnRef}&tr=${txnRef}&tn=Freshers26&am=${amount}&cu=INR`;
+ document.getElementById('accHolder').textContent=selectedAccount.name;
+ document.getElementById('accUpi').textContent=selectedAccount.upiId;
+ const qrContainer=document.getElementById('liveQrCode'); qrContainer.innerHTML='';
+ new QRCode(qrContainer,{text:upiUri,width:185,height:185,correctLevel:QRCode.CorrectLevel.M});
 }
-
-function copyUpiId(){
-  navigator.clipboard.writeText(selectedAccount.upiId);
-  alert('UPI ID copied: ' + selectedAccount.upiId);
+async function copyUpiId(){
+ try{
+  if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(selectedAccount.upiId);}
+  else{const ta=document.createElement('textarea');ta.value=selectedAccount.upiId;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();}
+  alert('UPI Address copied: '+selectedAccount.upiId);
+ }catch(e){alert('UPI Address: '+selectedAccount.upiId);}
 }
-
 function preparePayment(){
-  const name=document.getElementById('name').value.trim();
-  const roll=document.getElementById('roll').value.trim();
-  const email=document.getElementById('email').value.trim();
-  const msg=document.getElementById('msg');
-  if(!name||!roll||!email){
-    msg.textContent='Please fill in your name, roll number, and email first.';
-    return;
-  }
-  msg.textContent='';
-  document.getElementById('paymentBox').style.display='block';
-  renderAccountTabs();
-  renderQrCode();
-  document.getElementById('paymentBox').scrollIntoView({behavior:'smooth',block:'start'});
+ const name=document.getElementById('name').value.trim(),roll=document.getElementById('roll').value.trim(),email=document.getElementById('email').value.trim();
+ const msg=document.getElementById('msg');
+ const amount=document.getElementById('cat').value==='senior'?settings.senior_fee:settings.junior_fee;
+ if(amount==null){msg.textContent='The contribution fee is not available yet. Please try again later.';msg.style.color='#ff4444';return;}
+ if(!name||!roll||!email){msg.textContent='Please fill in your name, roll number, and email first.';msg.style.color='#ff4444';return;}
+ msg.textContent=''; document.getElementById('paymentBox').style.display='block'; renderAccountTabs(); renderQrCode(); document.getElementById('paymentBox').scrollIntoView({behavior:'smooth',block:'start'});
 }
-
 async function submitRegistrationWithProof(){
-  const name=document.getElementById('name').value.trim();
-  const roll=document.getElementById('roll').value.trim();
-  const email=document.getElementById('email').value.trim();
-  const phone=document.getElementById('phone').value.trim();
-  const category=document.getElementById('cat').value;
-  const amount=category==='senior'?settings.senior_fee:settings.junior_fee;
-  const screenshotInput=document.getElementById('screenshotFile');
-  const file = screenshotInput.files[0];
-  const msg=document.getElementById('msg');
-  const submitProofBtn=document.getElementById('submitProofBtn');
-
-  if(!file){
-    msg.textContent='Please attach your payment screenshot before submitting.';
-    return;
-  }
-
-  submitProofBtn.disabled=true;
-  msg.textContent='Uploading screenshot proof...';
-
-  const registrationId=crypto.randomUUID();
-  const fileExt = file.name.split('.').pop();
-  const filePath = `${registrationId}-${Date.now()}.${fileExt}`;
-
-  // 1. Upload screenshot
-  const { data: uploadData, error: uploadErr } = await supabaseClient
-    .storage
-    .from('payment-screenshots')
-    .upload(filePath, file);
-
-  if(uploadErr){
-    console.error('Upload error:', uploadErr);
-    msg.textContent='Screenshot upload failed: ' + uploadErr.message;
-    submitProofBtn.disabled=false;
-    return;
-  }
-
-  const { data: publicUrlData } = supabaseClient
-    .storage
-    .from('payment-screenshots')
-    .getPublicUrl(filePath);
-
-  const screenshotUrl = publicUrlData.publicUrl;
-
-  msg.textContent='Saving registration...';
-
-  // Generate Reference Tracking Code
-  const cleanRoll = roll.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-  const refCode = 'REF-' + cleanRoll + '-' + Math.floor(1000 + Math.random() * 9000);
-
-  // 2. Insert registration
-  const { error: insertErr } = await supabaseClient.from('registrations').insert({
-    id: registrationId,
-    name,
-    roll_number: roll,
-    email,
-    phone,
-    category,
-    amount,
-    payment_status: 'pending',
-    ticket_id: refCode,
-    notes: `Paid to ${selectedAccount.label} (${selectedAccount.upiId}). Proof: ${screenshotUrl}`
-  });
-
-  if(insertErr){
-    console.error('Insert error:', insertErr);
-    msg.textContent='Registration failed: ' + insertErr.message;
-    submitProofBtn.disabled=false;
-    return;
-  }
-
-  msg.textContent='Submitted successfully! Keep your Reference ID to check status.';
-  document.getElementById('tid').textContent = refCode;
-  document.getElementById('tn').textContent = name;
-  document.getElementById('td').textContent = roll + ' • ' + (category==='senior'?'Senior':'Junior');
-  document.getElementById('tstatus').textContent = 'PAYMENT UNDER REVIEW';
-  document.getElementById('tstatus').style.background = '#fff4e5';
-  document.getElementById('tstatus').style.color = '#b76e00';
-  document.getElementById('ticketCard').style.display = 'block';
-  document.getElementById('lookupTicket').value = roll;
-  document.getElementById('ticketCard').scrollIntoView({behavior:'smooth',block:'center'});
-  submitProofBtn.disabled=false;
+ const name=document.getElementById('name').value.trim(),roll=document.getElementById('roll').value.trim(),email=document.getElementById('email').value.trim(),phone=document.getElementById('phone').value.trim(),category=document.getElementById('cat').value;
+ const amount=category==='senior'?settings.senior_fee:settings.junior_fee, screenshotInput=document.getElementById('screenshotFile'),file=screenshotInput.files[0],msg=document.getElementById('msg'),submitProofBtn=document.getElementById('submitProofBtn');
+ if(!name||!roll||!email){msg.textContent='Please fill in your name, roll number, and email first.';msg.style.color='#ff4444';return;}
+ if(amount==null){msg.textContent='The contribution fee is not available yet.';msg.style.color='#ff4444';return;}
+ if(!file){msg.textContent='Please upload screenshot confirmation before submitting.';msg.style.color='#ff4444';return;}
+ submitProofBtn.disabled=true; msg.textContent='Uploading screenshot proof...'; msg.style.color='#fff';
+ try{
+  const registrationId=crypto.randomUUID(),fileExt=file.name.split('.').pop(),filePath=`${registrationId}-${Date.now()}.${fileExt}`;
+  const {error:uploadErr}=await supabaseClient.storage.from('payment-screenshots').upload(filePath,file);
+  if(uploadErr) throw new Error('Upload failed: '+uploadErr.message);
+  const {data:publicUrlData}=supabaseClient.storage.from('payment-screenshots').getPublicUrl(filePath),screenshotUrl=publicUrlData.publicUrl;
+  const cleanRoll=roll.replace(/[^a-zA-Z0-9]/g,'').toUpperCase(),refCode='REF-'+cleanRoll+'-'+Math.floor(1000+Math.random()*9000);
+  const {error:insertErr}=await supabaseClient.from('registrations').insert({id:registrationId,name,roll_number:roll,email,phone,category,amount,payment_status:'pending',ticket_id:refCode,notes:`Paid to ${selectedAccount.label} (${selectedAccount.upiId}). Proof: ${screenshotUrl}`});
+  if(insertErr) throw new Error('Registration insert error: '+insertErr.message);
+  msg.textContent='Submitted successfully! Reference ID generated.';msg.style.color='#4ade80';
+  document.getElementById('tid').textContent=refCode;document.getElementById('tn').textContent=name;document.getElementById('td').textContent=roll+' • '+(category==='senior'?'Senior':'Junior');
+  const status=document.getElementById('tstatus');status.textContent='PAYMENT UNDER REVIEW';status.style.background='rgba(235,130,30,.2)';status.style.color='#f59e0b';
+  document.getElementById('ticketCard').style.display='block';document.getElementById('lookupTicket').value=roll;document.getElementById('ticketCard').scrollIntoView({behavior:'smooth',block:'center'});
+ }catch(e){msg.textContent=e.message||'Submission failed. Please try again.';msg.style.color='#ff4444';}
+ finally{submitProofBtn.disabled=false;}
 }
+async function lookupTicket(){
+ const query=document.getElementById('lookupTicket').value.trim(),msg=document.getElementById('lookupMsg'),box=document.getElementById('lookupQr');box.innerHTML='';
+ if(!query){msg.textContent='Enter your Roll Number or Reference Code.';msg.style.color='#ff4444';return;}
+ msg.textContent='Searching...';msg.style.color='#fff';
+ const {data,error}=await supabaseClient.from('registrations').select('*').or(`ticket_id.ilike.%${query}%,roll_number.ilike.${query}`).order('created_at',{ascending:false}).limit(1);
+ if(error||!data||data.length===0){msg.textContent='No records located for that input.';msg.style.color='#ff4444';return;}
+ const reg=data[0];document.getElementById('tid').textContent=reg.ticket_id||'PENDING APPROVAL';document.getElementById('tn').textContent=reg.name;document.getElementById('td').textContent=reg.roll_number+' • '+reg.category.toUpperCase();
+ const status=document.getElementById('tstatus');
+ if(reg.payment_status==='verified'||reg.ticket_status==='issued'){
+  msg.textContent='Pass verified! Digital clearance confirmed.';msg.style.color='#4ade80';status.textContent='CLEARED & VERIFIED';status.style.background='rgba(34,197,94,.2)';status.style.color='#22c55e';document.getElementById('ticketCard').style.display='block';
+  new QRCode(box,{text:reg.ticket_qr_token||reg.ticket_id,width:170,height:170});
+ }else{
+  msg.textContent='Payment receipt is under verification with organizers.';msg.style.color='#f59e0b';status.textContent='PAYMENT UNDER REVIEW';status.style.background='rgba(235,130,30,.2)';status.style.color='#f59e0b';document.getElementById('ticketCard').style.display='block';
+ }
+}
+
+/* Controlled 3D motion: only on pointer movement, no continuous shaking. */
+(function(){
+ const art=document.getElementById('heroArt'); const cursor=document.getElementById('cursorLight');
+ if(!art) return;
+ window.addEventListener('pointermove',e=>{
+  cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px';
+  const r=art.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+  if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom) art.style.transform=`rotateY(${x*7}deg) rotateX(${-y*7}deg)`;
+  else art.style.transform='rotateY(0deg) rotateX(0deg)';
+ });
+})();
+(function(){
+ document.querySelectorAll('.tilt-card').forEach(card=>{
+  card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(700px) rotateY(${x*5}deg) rotateX(${-y*5}deg) translateY(-2px)`;});
+  card.addEventListener('pointerleave',()=>card.style.transform='');
+ });
+})();
 
 loadSettings();
-
-async function lookupTicket(){
-  const query = document.getElementById('lookupTicket').value.trim();
-  const msg = document.getElementById('lookupMsg'), box = document.getElementById('lookupQr');
-  box.innerHTML = '';
-
-  if(!query){
-    msg.textContent = 'Enter your Roll Number or Ticket/Ref ID.';
-    return;
-  }
-
-  msg.textContent = 'Searching...';
-
-  // Find latest registration by roll number or ticket_id
-  const { data, error } = await supabaseClient
-    .from('registrations')
-    .select('*')
-    .or(`ticket_id.ilike.%${query}%,roll_number.ilike.${query}`)
-    .order('created_at', { ascending: false })
-    .limit(1);
-
-  if(error || !data || data.length === 0){
-    console.error('Ticket lookup error:', error);
-    msg.textContent = 'No registration found for that Roll Number or ID.';
-    return;
-  }
-
-  const reg = data[0];
-
-  document.getElementById('tid').textContent = reg.ticket_id || 'PENDING APPROVAL';
-  document.getElementById('tn').textContent = reg.name;
-  document.getElementById('td').textContent = reg.roll_number + ' • ' + reg.category.toUpperCase();
-
-  if(reg.payment_status === 'verified' || reg.ticket_status === 'issued'){
-    msg.textContent = 'Payment verified! Here is your event ticket.';
-    const statusElem = document.getElementById('tstatus');
-    statusElem.textContent = 'TICKET ISSUED & VERIFIED';
-    statusElem.style.background = '#eaf5ee';
-    statusElem.style.color = '#0d7a45';
-    document.getElementById('ticketCard').style.display = 'block';
-    
-    // Generate Entry QR Code
-    new QRCode(box, {
-      text: reg.ticket_qr_token || reg.ticket_id,
-      width: 180,
-      height: 180
-    });
-  } else {
-    msg.textContent = 'Your payment screenshot is still under review by organizers.';
-    const statusElem = document.getElementById('tstatus');
-    statusElem.textContent = 'PAYMENT UNDER REVIEW';
-    statusElem.style.background = '#fff4e5';
-    statusElem.style.color = '#b76e00';
-    document.getElementById('ticketCard').style.display = 'block';
-  }
-}
 </script>
 </body>
 </html>
