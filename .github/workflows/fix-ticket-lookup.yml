@@ -1,0 +1,38 @@
+name: Fix public ticket lookup
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - name: Patch public lookup
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          new = """async function lookupTicket(){const q=document.getElementById('lookupTicket').value.trim(),m=document.getElementById('lookupMsg'),box=document.getElementById('lookupQr');box.innerHTML='';if(!q){m.textContent='Enter Roll Number, Reference ID, or Name.';m.className='sub err';return}m.textContent='Searching...';m.className='sub';const clean=q.replace(/[%_]/g,'').trim();let r=null,err=null;for(const field of ['ticket_id','roll_number','name']){const res=await supabaseClient.from('registrations').select('*').ilike(field,clean).order('created_at',{ascending:false}).limit(1);if(res.error){err=res.error;break}if(res.data&&res.data.length){r=res.data[0];break}}if(err){console.error('Ticket lookup error:',err);m.textContent='Verification service error. Please try again.';m.className='sub err';return}if(!r){m.textContent='No registration found for that Roll Number, Reference ID, or Name.';m.className='sub err';return}document.getElementById('tid').textContent=r.ticket_id||'PENDING';document.getElementById('tn').textContent=r.name||'';document.getElementById('td').textContent=(r.roll_number||'')+' • '+String(r.category||'').toUpperCase();document.getElementById('ticketCard').style.display='block';if(r.payment_status==='verified'||r.ticket_status==='issued'){m.textContent='Pass verified! Digital clearance confirmed.';m.className='sub ok';document.getElementById('tstatus').textContent='CLEARED & VERIFIED';const token=r.ticket_qr_token||r.ticket_id;if(token)new QRCode(box,{text:token,width:170,height:170})}else{m.textContent='Registration found. Payment receipt is under verification with organizers.';m.className='sub';document.getElementById('tstatus').textContent='PAYMENT UNDER REVIEW'}}"
+          pattern = re.compile(r'async function lookupTicket\(\)\{.*?(?=const renderer=)', re.S)
+          if not pattern.search(s):
+              raise SystemExit('lookupTicket function not found')
+          s2 = pattern.sub(new + '\n', s, count=1)
+          s2 = s2.replace('Query registration by Roll Number or Reference ID.', 'Query registration by Roll Number, Reference ID, or Name.')
+          if s2 == s:
+              print('No changes needed')
+          else:
+              p.write_text(s2, encoding='utf-8')
+          PY
+      - name: Commit fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'fix: make public ticket lookup robust'
+          git push
