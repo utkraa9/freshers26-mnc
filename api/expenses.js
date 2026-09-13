@@ -40,7 +40,7 @@ module.exports = async (req, res) => {
     if (req.method === 'GET') {
       const { data, error } = await supabase
         .from('expenses')
-        .select('id,date,expense,category,amount,notes,created_at')
+        .select('id,date,expense_name,category,amount,notes,created_at')
         .order('date', { ascending: false })
         .order('created_at', { ascending: false })
         .limit(100);
@@ -49,12 +49,14 @@ module.exports = async (req, res) => {
         console.error('expenses GET:', error);
         return res.status(500).json({ error: error.message || 'Could not load expenses' });
       }
-      return res.status(200).json({ expenses: data || [] });
+
+      const expenses = (data || []).map(item => ({ ...item, expense: item.expense_name }));
+      return res.status(200).json({ expenses });
     }
 
     if (req.method === 'POST') {
       const body = req.body || {};
-      const expense = String(body.expense || '').trim();
+      const expense = String(body.expense || body.expense_name || '').trim();
       const category = String(body.category || 'Other').trim();
       const amount = Number(body.amount);
       const date = String(body.date || new Date().toISOString().slice(0, 10));
@@ -66,15 +68,16 @@ module.exports = async (req, res) => {
 
       const { data, error } = await supabase
         .from('expenses')
-        .insert({ expense, category, amount, date, notes })
-        .select('id,date,expense,category,amount,notes,created_at')
+        .insert({ expense_name: expense, category, amount, date, notes })
+        .select('id,date,expense_name,category,amount,notes,created_at')
         .single();
 
       if (error) {
         console.error('expenses POST:', error);
         return res.status(500).json({ error: error.message || 'Could not save expense' });
       }
-      return res.status(201).json({ expense: data });
+
+      return res.status(201).json({ expense: { ...data, expense: data.expense_name } });
     }
 
     return res.status(405).json({ error: 'Method not allowed' });
