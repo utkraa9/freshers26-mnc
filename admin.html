@@ -72,7 +72,7 @@ async function addExpense(){
     // Fallback path: authenticated Supabase insert. This keeps Expenses working
     // if Vercel serves an older function while the frontend is already updated.
     if(!response.ok){
-      const direct=await supabaseClient.from('expenses').insert(payload).select('id,date,expense,category,amount,notes,created_at').single();
+      const directPayload={expense_name:payload.expense,category:payload.category,amount:payload.amount,date:payload.date,notes:payload.notes};const direct=await supabaseClient.from('expenses').insert(directPayload).select('id,date,expense_name,category,amount,notes,created_at').single();
       if(direct.error) throw new Error(result.error||direct.error.message||'Could not save expense.');
     }
 
@@ -97,9 +97,9 @@ async function loadExpenses(){
       data=result.expenses||[];
     }else{
       // Fallback read for the same reason as the save fallback.
-      const direct=await supabaseClient.from('expenses').select('id,date,expense,category,amount,notes,created_at').order('date',{ascending:false}).order('created_at',{ascending:false}).limit(100);
+      const direct=await supabaseClient.from('expenses').select('id,date,expense_name,category,amount,notes,created_at').order('date',{ascending:false}).order('created_at',{ascending:false}).limit(100);
       if(direct.error) throw new Error(result.error||direct.error.message||'Could not load expenses.');
-      data=direct.data||[];
+      data=(direct.data||[]).map(x=>({...x,expense:x.expense_name}));
     }
 
     list.innerHTML=data.length?data.map(x=>`<div class="row"><span>${esc(x.expense)}<small style="display:block;color:var(--muted)">${esc(x.category)} • ${esc(x.date)}</small></span><b>₹${Number(x.amount||0).toLocaleString('en-IN')}</b></div>`).join(''):'No expenses yet.';
