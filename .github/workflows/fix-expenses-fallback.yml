@@ -1,0 +1,54 @@
+name: Fix expenses fallback
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Patch admin expenses fallback
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('admin.html')
+          s = p.read_text()
+
+          old_save = "const direct=await supabaseClient.from('expenses').insert(payload).select('id,date,expense,category,amount,notes,created_at').single();"
+          new_save = "const directPayload={expense_name:payload.expense,category:payload.category,amount:payload.amount,date:payload.date,notes:payload.notes};const direct=await supabaseClient.from('expenses').insert(directPayload).select('id,date,expense_name,category,amount,notes,created_at').single();"
+          if old_save not in s:
+              raise SystemExit('save snippet not found')
+          s=s.replace(old_save,new_save,1)
+
+          old_read = "const direct=await supabaseClient.from('expenses').select('id,date,expense,category,amount,notes,created_at').order('date',{ascending:false}).order('created_at',{ascending:false}).limit(100);"
+          new_read = "const direct=await supabaseClient.from('expenses').select('id,date,expense_name,category,amount,notes,created_at').order('date',{ascending:false}).order('created_at',{ascending:false}).limit(100);"
+          if old_read not in s:
+              raise SystemExit('read snippet not found')
+          s=s.replace(old_read,new_read,1)
+
+          old_data = "data=direct.data||[];"
+          new_data = "data=(direct.data||[]).map(x=>({...x,expense:x.expense_name}));"
+          if old_data not in s:
+              raise SystemExit('data snippet not found')
+          s=s.replace(old_data,new_data,1)
+
+          p.write_text(s)
+          PY
+
+      - name: Commit patch and remove workflow
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add admin.html .github/workflows/fix-expenses-fallback.yml
+          git commit -m 'fix: align organizer expenses fallback with expense_name schema'
+          git rm .github/workflows/fix-expenses-fallback.yml
+          git commit -m 'chore: remove temporary expenses workflow'
+          git push
