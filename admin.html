@@ -50,8 +50,41 @@ function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&l
 async function verifyPayment(id){if(!confirm('Only use this after confirming the payment succeeded in Razorpay. Continue?'))return;const ticket='FR26-'+crypto.randomUUID().replaceAll('-','').slice(0,12).toUpperCase();const {error}=await supabaseClient.from('registrations').update({payment_status:'verified',ticket_status:'issued',ticket_id:ticket,ticket_qr_token:ticket,verified_at:new Date().toISOString(),verified_by:currentProfile?.id||null}).eq('id',id);if(error){alert('Verification failed: '+error.message);return}await loadRegistrations()}
 function updateOverview(rows){const n=rows.length,senior=rows.filter(r=>String(r.category).toLowerCase()==='senior').length,junior=n-senior,pending=rows.filter(r=>String(r.payment_status).toLowerCase()!=='verified').length,collected=rows.filter(r=>String(r.payment_status).toLowerCase()==='verified').reduce((s,r)=>s+Number(r.amount||0),0),checkedIn=rows.filter(r=>r.checked_in_at).length;totalCollected=collected;const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};set('regCount',n);set('seniorCount',senior);set('juniorCount',junior);set('pending',pending);set('collected','₹'+collected.toLocaleString('en-IN'));set('checkCount',checkedIn);updateBalance()}
 function updateBalance(){const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};set('spent','₹'+totalSpent.toLocaleString('en-IN'));set('balance','₹'+(totalCollected-totalSpent).toLocaleString('en-IN'))}
-async function addExpense(){const msg=document.getElementById('expenseMsg');const payload={expense:document.getElementById('expenseName').value.trim(),category:document.getElementById('expenseCategory').value,amount:Number(document.getElementById('expenseAmount').value)||0,date:document.getElementById('expenseDate').value||new Date().toISOString().slice(0,10),notes:document.getElementById('expenseNotes').value.trim()};if(!payload.expense||!payload.amount){msg.textContent='Enter expense name and amount.';return}const {error}=await supabaseClient.from('expenses').insert(payload);msg.textContent=error?'Could not save expense.':'Expense saved.';if(!error){document.getElementById('expenseName').value='';document.getElementById('expenseAmount').value='';document.getElementById('expenseNotes').value='';await loadExpenses()}}
-async function loadExpenses(){const list=document.getElementById('expenseList');if(!list)return;const {data,error}=await supabaseClient.from('expenses').select('date,expense,category,amount,notes').order('date',{ascending:false}).limit(20);if(error){list.textContent='Could not load expenses.';return}list.innerHTML=data?.length?data.map(x=>`<div class="row"><span>${esc(x.expense)}<small style="display:block;color:var(--muted)">${esc(x.category)} • ${esc(x.date)}</small></span><b>₹${Number(x.amount||0).toLocaleString('en-IN')}</b></div>`).join(''):'No expenses yet.';totalSpent=(data||[]).reduce((s,x)=>s+Number(x.amount||0),0);updateBalance()}
+async function addExpense(){
+  const msg=document.getElementById('expenseMsg');
+  const payload={
+    expense:document.getElementById('expenseName').value.trim(),
+    category:document.getElementById('expenseCategory').value,
+    amount:Number(document.getElementById('expenseAmount').value),
+    date:document.getElementById('expenseDate').value||new Date().toISOString().slice(0,10),
+    notes:document.getElementById('expenseNotes').value.trim()
+  };
+  if(!payload.expense||!Number.isFinite(payload.amount)||payload.amount<=0){msg.textContent='Enter expense name and a valid amount.';return}
+  msg.textContent='Saving...';
+  try{
+    const session=(await supabaseClient.auth.getSession()).data.session;
+    if(!session){msg.textContent='Session expired. Please sign in again.';return}
+    const response=await fetch('/api/expenses',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify(payload)});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(result.error||'Could not save expense.');
+    msg.textContent='Expense saved successfully.';
+    document.getElementById('expenseName').value='';document.getElementById('expenseAmount').value='';document.getElementById('expenseNotes').value='';
+    await loadExpenses();
+  }catch(e){console.error(e);msg.textContent=e.message||'Could not save expense.'}
+}
+async function loadExpenses(){
+  const list=document.getElementById('expenseList');if(!list)return;
+  try{
+    const session=(await supabaseClient.auth.getSession()).data.session;
+    if(!session){list.textContent='Session expired.';return}
+    const response=await fetch('/api/expenses',{headers:{'Authorization':'Bearer '+session.access_token}});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(result.error||'Could not load expenses.');
+    const data=result.expenses||[];
+    list.innerHTML=data.length?data.map(x=>`<div class="row"><span>${esc(x.expense)}<small style="display:block;color:var(--muted)">${esc(x.category)} • ${esc(x.date)}</small></span><b>₹${Number(x.amount||0).toLocaleString('en-IN')}</b></div>`).join(''):'No expenses yet.';
+    totalSpent=data.reduce((s,x)=>s+Number(x.amount||0),0);updateBalance();
+  }catch(e){console.error(e);list.textContent=e.message||'Could not load expenses.';totalSpent=0;updateBalance()}
+}
 async function loadOrganizerRequests(){if(!isMainAuthority)return;const body=document.getElementById('organizerTable');body.innerHTML='<tr><td colspan="4" class="empty">Loading...</td></tr>';const {data,error}=await supabaseClient.rpc('get_organizer_requests');if(error){body.innerHTML='<tr><td colspan="4" class="empty">Could not load organizer requests: '+esc(error.message)+'</td></tr>';return}if(!data?.length){body.innerHTML='<tr><td colspan="4" class="empty">No organizer accounts yet.</td></tr>';return}body.innerHTML=data.map(x=>`<tr><td>${esc(x.full_name||'—')}</td><td>${esc(x.email||'—')}</td><td><span class="status ${x.approved?'ok':''}">${x.approved?'Approved':'Pending'}</span></td><td>${x.approved?'<button class="btn danger" onclick="changeOrganizerApproval(\''+x.id+'\',false)">Revoke</button>':'<div class="actions"><button class="btn" onclick="changeOrganizerApproval(\''+x.id+'\',true)">Approve</button><button class="btn danger" onclick="changeOrganizerApproval(\''+x.id+'\',false)">Reject</button></div>'}</td></tr>`).join('')}
 async function changeOrganizerApproval(id,approved){if(!isMainAuthority){alert('Only the main authority can approve organizers.');return}if(!confirm((approved?'Approve':'Reject')+' this organizer account?'))return;const {data,error}=await supabaseClient.rpc('set_organizer_approval',{p_user_id:id,p_approved:approved});if(error){alert('Could not update organizer approval: '+error.message);return}loadOrganizerRequests()}
 </script>
