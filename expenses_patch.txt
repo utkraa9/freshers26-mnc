@@ -1,0 +1,56 @@
+async function addExpense(){
+  const msg=document.getElementById('expenseMsg');
+  const payload={
+    expense:document.getElementById('expenseName').value.trim(),
+    category:document.getElementById('expenseCategory').value,
+    amount:Number(document.getElementById('expenseAmount').value),
+    date:document.getElementById('expenseDate').value||new Date().toISOString().slice(0,10),
+    notes:document.getElementById('expenseNotes').value.trim()
+  };
+  if(!payload.expense||!Number.isFinite(payload.amount)||payload.amount<=0){msg.textContent='Enter expense name and a valid amount.';return}
+  msg.textContent='Saving...';
+  try{
+    const session=(await supabaseClient.auth.getSession()).data.session;
+    if(!session){msg.textContent='Session expired. Please sign in again.';return}
+
+    // Primary path: secure server endpoint.
+    let response=await fetch('/api/expenses',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify(payload)});
+    let result=await response.json().catch(()=>({}));
+
+    // Fallback path: authenticated Supabase insert. This keeps Expenses working
+    // if Vercel serves an older function while the frontend is already updated.
+    if(!response.ok){
+      const direct=await supabaseClient.from('expenses').insert(payload).select('id,date,expense,category,amount,notes,created_at').single();
+      if(direct.error) throw new Error(result.error||direct.error.message||'Could not save expense.');
+    }
+
+    msg.textContent='Expense saved successfully.';
+    document.getElementById('expenseName').value='';
+    document.getElementById('expenseAmount').value='';
+    document.getElementById('expenseNotes').value='';
+    await loadExpenses();
+  }catch(e){console.error(e);msg.textContent=e.message||'Could not save expense.'}
+}
+async function loadExpenses(){
+  const list=document.getElementById('expenseList');if(!list)return;
+  try{
+    const session=(await supabaseClient.auth.getSession()).data.session;
+    if(!session){list.textContent='Session expired.';return}
+
+    const response=await fetch('/api/expenses',{headers:{'Authorization':'Bearer '+session.access_token}});
+    const result=await response.json().catch(()=>({}));
+    let data=[];
+
+    if(response.ok){
+      data=result.expenses||[];
+    }else{
+      // Fallback read for the same reason as the save fallback.
+      const direct=await supabaseClient.from('expenses').select('id,date,expense,category,amount,notes,created_at').order('date',{ascending:false}).order('created_at',{ascending:false}).limit(100);
+      if(direct.error) throw new Error(result.error||direct.error.message||'Could not load expenses.');
+      data=direct.data||[];
+    }
+
+    list.innerHTML=data.length?data.map(x=>`<div class="row"><span>${esc(x.expense)}<small style="display:block;color:var(--muted)">${esc(x.category)} • ${esc(x.date)}</small></span><b>₹${Number(x.amount||0).toLocaleString('en-IN')}</b></div>`).join(''):'No expenses yet.';
+    totalSpent=data.reduce((s,x)=>s+Number(x.amount||0),0);updateBalance();
+  }catch(e){console.error(e);list.textContent=e.message||'Could not load expenses.';totalSpent=0;updateBalance()}
+}
